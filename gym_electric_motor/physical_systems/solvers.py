@@ -1,6 +1,6 @@
 from scipy.integrate import ode, solve_ivp, odeint
-
-
+from functools import partial
+from numba import jit
 class OdeSolver:
     """
     Interface and base class for all used OdeSolvers in gym-electric-motor.
@@ -204,6 +204,7 @@ class ScipySolveIvpSolver(OdeSolver):
         if method in ['Radau', 'BDF', 'LSODA']:
             self._solver_kwargs['jac'] = self._system_jacobian
 
+    #@partial(jit, static_argnums=(0,))
     def integrate(self, t):
         # Docstring of superclass
         result = solve_ivp(
@@ -227,7 +228,7 @@ class ScipyOdeIntSolver(OdeSolver):
             kwargs(dict): Arguments to pass to the solver. See the scipy description for further information.
         """
         self._solver_args = kwargs
-
+    #@njit
     def integrate(self, t):
         # Docstring of superclass
         result = odeint(self._system_equation, self._y, [self._t, t], args=self._f_params, Dfun=self._system_jacobian,

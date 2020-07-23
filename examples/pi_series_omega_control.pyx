@@ -9,8 +9,7 @@ sys.path.append(os.path.abspath(os.path.join('..')))
 import gym_electric_motor as gem
 from gym_electric_motor import reference_generators as rg
 from gym_electric_motor.visualization import MotorDashboard
-from functools import partial
-from numba import jit, njit, vectorize
+
 
 if __name__ == '__main__':
     env = gem.make(

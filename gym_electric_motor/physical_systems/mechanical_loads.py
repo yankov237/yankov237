@@ -1,4 +1,5 @@
 import numpy as np
+from numba import jit, njit, vectorize, jitclass
 
 
 class MechanicalLoad:
@@ -74,7 +75,7 @@ class MechanicalLoad:
             j_rotor(float): The moment of inertia of the rotor shaft of the motor.
         """
         self._j_total += j_rotor
-
+    #@njit
     def mechanical_ode(self, t, mechanical_state, torque):
         """
         Calculation of the derivatives of the mechanical-ODE for each of the mechanical states.
@@ -133,7 +134,7 @@ class PolynomialStaticLoad(MechanicalLoad):
     _load_parameter = dict(a=0.0, b=0.0, c=0., j_load=0)
 
     #: Parameter indicating if the class is implementing the optional jacobian function
-    HAS_JACOBIAN = True
+    HAS_JACOBIAN = False
 
     @property
     def load_parameter(self):
@@ -161,7 +162,7 @@ class PolynomialStaticLoad(MechanicalLoad):
         """
         sign = 1 if omega > 0 else -1 if omega < 0 else 0
         return sign * (self._c * omega**2 + self._b * abs(omega) + self._a)
-
+    @jit()
     def mechanical_ode(self, t, mechanical_state, torque):
         # Docstring of superclass
         return np.array([(torque - self._static_load(mechanical_state[self.OMEGA_IDX])) / self._j_total])

@@ -5,7 +5,8 @@ from ..core import PhysicalSystem
 from ..physical_systems import electric_motors as em, mechanical_loads as ml, converters as cv, \
     voltage_supplies as vs, noise_generators as ng, solvers as sv
 from ..utils import instantiate, set_state_array
-
+from numba import njit, vectorize, jitclass, jit
+from functools import partial
 
 class SCMLSystem(PhysicalSystem):
     """
@@ -113,7 +114,7 @@ class SCMLSystem(PhysicalSystem):
         self._system_eq_placeholder = None
         self._motor_deriv_size = None
         self._load_deriv_size = None
-
+    #@jit
     def _set_limits(self):
         """
         Method to set the physical limits from the modules.
@@ -170,6 +171,7 @@ class SCMLSystem(PhysicalSystem):
         self.VOLTAGES_IDX = list(range(voltages_lower, voltages_upper))
         self.U_SUP_IDX = voltages_upper
 
+    #@partial(jit, static_argnums=(0,))
     def simulate(self, action, *_, **__):
         # Docstring of superclass
         ode_state = self._ode_solver.y
@@ -204,6 +206,7 @@ class SCMLSystem(PhysicalSystem):
         self.system_state[self.U_SUP_IDX] = u_sup
         return (self.system_state + noise) / self._limits
 
+    #@partial(jit, static_argnums=(0,))
     def _system_equation(self, t, state, u_in, **__):
         """
         Systems differential equation system.
@@ -287,7 +290,7 @@ class SCMLSystem(PhysicalSystem):
         ))
         return (system_state + noise) / self._limits
 
-
+#@jitclass(spec=[])
 class DcMotorSystem(SCMLSystem):
     """
     SCML-System that can be used for all DC Motors.
@@ -469,7 +472,7 @@ class SynchronousMotorSystem(ThreePhaseMotorSystem):
         self.EPSILON_IDX = voltages_upper
         self.U_SUP_IDX = self.EPSILON_IDX + 1
         self._ode_epsilon_idx = self._motor_ode_idx[-1]
-
+    @jit()
     def simulate(self, action, *_, **__):
         # Docstring of superclass
         ode_state = self._ode_solver.y
@@ -712,7 +715,7 @@ class DoublyFedInductionMotorSystem(ThreePhaseMotorSystem):
         self.rotor_voltage_low_idx = self.stator_voltage_high_idx
         self.rotor_voltage_high_idx = self.rotor_voltage_low_idx + \
                                        self._converter.subsignal_voltage_space_dims[self.rotor_voltage_space_idx]
-
+    @jit
     def _set_limits(self):
         """
         Method to set the physical limits from the modules.

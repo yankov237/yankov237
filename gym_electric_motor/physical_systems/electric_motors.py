@@ -1,6 +1,6 @@
 import numpy as np
 import math
-
+from numba import njit
 
 class ElectricMotor:
     """
@@ -474,7 +474,7 @@ class DcSeriesMotor(DcMotor):
     def torque(self, currents):
         # Docstring of superclass
         return super().torque([currents[self.I_IDX], currents[self.I_IDX]])
-
+    #@njit
     def electrical_ode(self, state, u_in, omega, *_):
         # Docstring of superclass
         return np.matmul(

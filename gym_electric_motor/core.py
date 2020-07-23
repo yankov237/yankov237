@@ -18,10 +18,10 @@ Each ElectricMotorEnvironment contains the four following modules:
 import gym
 import numpy as np
 from gym.spaces import Box
-
+from numba import jit, njit
 from .utils import set_state_array
 from .utils import instantiate
-
+from functools import partial
 
 class ElectricMotorEnvironment(gym.core.Env):
     """
@@ -204,13 +204,14 @@ class ElectricMotorEnvironment(gym.core.Env):
         self._reward_function.reset(self._state, self._reference)
         self._reward = 0.0
         return self._state[self.state_filter], next_ref
-
-    def render(self, *_, **__):
+    #@njit()
+    def render(self):
         """
         Update the visualization of the motor.
         """
         self._visualization.step(self._state, self._reference, self._reward, self._reset_required)
 
+    #@partial(jit, static_argnums=(0,))
     def step(self, action):
         """
         Perform one simulation step of the environment with an action of the action space.
