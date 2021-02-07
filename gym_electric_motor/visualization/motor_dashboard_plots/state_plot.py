@@ -125,10 +125,10 @@ class StatePlot(TimePlot):
             ref_label = y_label[:unit_split] + r'$^*$' + y_label[unit_split:]
             self._axis.legend(
                 (self._state_line, self._reference_line, lim), (y_label, ref_label, limit_label), loc='upper left',
-                numpoints=20
+                numpoints=50
             )
         else:
-            self._axis.legend((self._state_line, lim), (y_label, limit_label), loc='upper left', numpoints=20)
+            self._axis.legend((self._state_line, lim), (y_label, limit_label), loc='upper left', numpoints=50)
 
         self._y_data = [self._state_data, self._ref_data]
 

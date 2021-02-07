@@ -9,7 +9,7 @@ from .electric_motors import DcExternallyExcitedMotor, DcSeriesMotor, DcPermanen
 
 from .mechanical_loads import MechanicalLoad, PolynomialStaticLoad, ExternalSpeedLoad, ConstantSpeedLoad
 
-from .solvers import OdeSolver, EulerSolver, ScipyOdeIntSolver, ScipySolveIvpSolver, ScipyOdeSolver
+from .solvers import OdeSolver, EulerSolver, ScipyOdeIntSolver, ScipySolveIvpSolver, ScipyOde, ScipyOdeSolver
 
 from .noise_generators import NoiseGenerator, GaussianWhiteNoiseGenerator
 
@@ -51,9 +51,10 @@ register_class(ExternalSpeedLoad, MechanicalLoad, 'ExtSpeedLoad')
 register_class(GaussianWhiteNoiseGenerator, NoiseGenerator, 'GWN')
 
 register_class(EulerSolver, OdeSolver, 'euler')
-register_class(ScipyOdeSolver, OdeSolver, 'scipy.ode')
+register_class(ScipyOde, OdeSolver, 'scipy.ode')
 register_class(ScipySolveIvpSolver, OdeSolver, 'scipy.solve_ivp')
 register_class(ScipyOdeIntSolver, OdeSolver, 'scipy.odeint')
+register_class(ScipyOdeSolver, OdeSolver, 'scipy.odesolver')
 
 register_class(DcSeriesMotor, ElectricMotor, 'DcSeries')
 register_class(DcPermanentlyExcitedMotor, ElectricMotor, 'DcPermEx')

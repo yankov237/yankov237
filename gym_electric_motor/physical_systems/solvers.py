@@ -1,4 +1,4 @@
-from scipy.integrate import ode, solve_ivp, odeint
+from scipy.integrate import ode, solve_ivp, odeint, RK45, RK23, LSODA, DOP853, Radau, BDF, OdeSolver as SpOdeSolver
 
 
 class OdeSolver:
@@ -136,7 +136,7 @@ class EulerSolver(OdeSolver):
         return self._y
 
 
-class ScipyOdeSolver(OdeSolver):
+class ScipyOde(OdeSolver):
     """
     Wrapper class for all ode-solvers in the scipy.integrate.ode package.
 
@@ -211,6 +211,62 @@ class ScipySolveIvpSolver(OdeSolver):
         )
         self._t = t
         self._y = result.y.T[-1]
+        return self._y
+
+
+class ScipyOdeSolver(OdeSolver):
+    """
+    Wrapper class for solvers derived from the scipy.integrate.OdeSolver class.
+
+    https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.html
+    """
+
+    def __init__(self, solver_class=RK45, supports_jacobian=None, **kwargs):
+        # Docstring of superclass
+        assert issubclass(solver_class, SpOdeSolver)
+        if supports_jacobian is None and solver_class in [Radau, BDF, LSODA]:
+            supports_jacobian = True
+        else:
+            supports_jacobian = False
+        if supports_jacobian:
+            self._make_solver = lambda t, y: solver_class(self._system_eq, t, y, 0.0, jac=self._system_jac)
+        else:
+            self._make_solver = lambda t, y: solver_class(self._system_eq, t, y, 0.0)
+        self._solver_class = solver_class
+        self._solver_kwargs = kwargs
+        self._f_params = ()
+        self._solver = None
+        self._reset = True
+
+    def set_initial_value(self, initial_value, t=0):
+        super().set_initial_value(initial_value, t)
+        self._reset = True
+
+    def _system_eq(self, t, y):
+        return self._system_equation(t, y, *self._f_params)
+
+    def _system_jac(self, t, y):
+        return self._system_jacobian(t, y, *self._f_params)
+
+    def set_f_params(self, *args):
+        """Set further arguments for the systems function call like input quantities.
+
+        Args:
+            args(list): Additional arguments for the next function calls.
+        """
+        self._f_params = args
+
+    def integrate(self, t):
+        # Docstring of superclass
+        if self._reset:
+            self._solver = self._make_solver(self._t, self._y)
+            self._reset = False
+        self._solver.t_bound = t
+        self._solver.status = 'running'
+        while self._solver.status == 'running':
+            self._solver.step()
+        self._y = self._solver.y
+        self._t = self._solver.t
         return self._y
 
 
