@@ -2,9 +2,7 @@ from scipy.integrate import ode, solve_ivp, odeint, RK45, RK23, LSODA, DOP853, R
 
 
 class OdeSolver:
-    """
-    Interface and base class for all used OdeSolvers in gym-electric-motor.
-    """
+    """Interface and base class for all used OdeSolvers in gym-electric-motor."""
 
     #: Current system time t
     _t = 0
@@ -34,8 +32,7 @@ class OdeSolver:
         return self._y
 
     def set_initial_value(self, initial_value, t=0):
-        """
-        Set the new initial system state after reset.
+        """Sets the new initial system state after reset.
 
         Args:
             initial_value(numpy.ndarray(float)): Initial system state
@@ -45,8 +42,7 @@ class OdeSolver:
         self._t = t
 
     def integrate(self, t):
-        """
-        Integrate the ODE-System from current time until time t
+        """Integrate the ODE-System from current time until time t
 
         Args:
             t(float): Time until the system shall be integrated
@@ -56,8 +52,7 @@ class OdeSolver:
         raise NotImplementedError
 
     def set_system_equation(self, system_equation, jac=None):
-        """
-        Setting of the systems equation.
+        """Definition the systems equation.
 
         Args:
             system_equation(function_pointer): Pointer to the systems equation with the parameters (t, y, *args)
@@ -67,8 +62,7 @@ class OdeSolver:
         self._system_jacobian = jac
 
     def set_f_params(self, *args):
-        """
-        Set further arguments for the systems function call like input quantities.
+        """Pass further arguments for the systems function call like input quantities.
 
         Args:
             args(list): Additional arguments for the next function calls.
@@ -77,8 +71,7 @@ class OdeSolver:
 
 
 class EulerSolver(OdeSolver):
-    """
-    Solves a system of differential equations of first order for a given time step with linear approximation.
+    """Solves a system of differential equations of first order for a given time step with linear approximation.
 
         .. math:
             x^\prime(t) = f(x(t))
@@ -101,8 +94,7 @@ class EulerSolver(OdeSolver):
         return self._integrate(t)
 
     def _integrate_nsteps(self, t):
-        """
-        Integration method for nsteps > 1
+        """Integration method for nsteps > 1
 
         Args:
             t(float): Time until the system shall be calculated
@@ -122,8 +114,7 @@ class EulerSolver(OdeSolver):
         return self._y
 
     def _integrate_one_step(self, t):
-        """
-        Integration method for nsteps = 1. (For faster computation)
+        """Integration method for nsteps = 1. (For faster computation)
 
         Args:
             t(float): Time until the system shall be calculated
@@ -137,8 +128,7 @@ class EulerSolver(OdeSolver):
 
 
 class ScipyOde(OdeSolver):
-    """
-    Wrapper class for all ode-solvers in the scipy.integrate.ode package.
+    """Wrapper class for all ode-solvers in the scipy.integrate.ode package.
 
     https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.ode.html
     """
@@ -185,8 +175,7 @@ class ScipyOde(OdeSolver):
 
 
 class ScipySolveIvpSolver(OdeSolver):
-    """
-    Wrapper class for all ode-solvers in the scipy.integrate.solve_ivp function
+    """Wrapper class for all ode-solvers in the scipy.integrate.solve_ivp function
 
     https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html
     """
@@ -215,14 +204,22 @@ class ScipySolveIvpSolver(OdeSolver):
 
 
 class ScipyOdeSolver(OdeSolver):
-    """
-    Wrapper class for solvers derived from the scipy.integrate.OdeSolver class.
+    """Wrapper class for solvers derived from the scipy.integrate.OdeSolver class.
 
     https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.html
     """
+    solver_dict = {
+        'RK23': RK23,
+        'RK45': RK45,
+        'DOP853': DOP853,
+        'Radau': Radau,
+        'BDF': BDF,
+        'LSODA': LSODA
+    }
 
-    def __init__(self, solver_class=RK45, supports_jacobian=None, **kwargs):
+    def __init__(self, method=RK45, supports_jacobian=None, **kwargs):
         # Docstring of superclass
+        solver_class = method if isinstance(method, SpOdeSolver) else self.solver_dict[method]
         assert issubclass(solver_class, SpOdeSolver)
         if supports_jacobian is None and solver_class in [Radau, BDF, LSODA]:
             supports_jacobian = True
