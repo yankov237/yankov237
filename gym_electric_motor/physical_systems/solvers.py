@@ -226,9 +226,9 @@ class ScipyOdeSolver(OdeSolver):
         else:
             supports_jacobian = False
         if supports_jacobian:
-            self._make_solver = lambda t, y: solver_class(self._system_eq, t, y, 0.0, jac=self._system_jac)
+            self._make_solver = lambda t, y: solver_class(self._system_eq, t, y, 0.0, jac=self._system_jac, **kwargs)
         else:
-            self._make_solver = lambda t, y: solver_class(self._system_eq, t, y, 0.0)
+            self._make_solver = lambda t, y: solver_class(self._system_eq, t, y, 0.0, **kwargs)
         self._solver_class = solver_class
         self._solver_kwargs = kwargs
         self._f_params = ()
