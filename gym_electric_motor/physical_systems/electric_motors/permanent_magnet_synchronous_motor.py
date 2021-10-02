@@ -79,18 +79,18 @@ class PermanentMagnetSynchronousMotor(SynchronousMotor):
         the general limits/nominal values (e.g. i)
     """
 
-    #### Parameters taken from DOI: 10.1109/TPEL.2020.3006779 (A. Brosch, S. Hanke, O. Wallscheid, J. Boecker)
-    #### and DOI: 10.1109/IEMDC.2019.8785122 (S. Hanke, O. Wallscheid, J. Boecker)
+    # Parameters taken from DOI: 10.1109/TPEL.2020.3006779 (A. Brosch, S. Hanke, O. Wallscheid, J. Boecker)
+    # and DOI: 10.1109/IEMDC.2019.8785122 (S. Hanke, O. Wallscheid, J. Boecker)
     _default_motor_parameter = {
         'p': 3,
         'l_d': 0.37e-3,
         'l_q': 1.2e-3,
-        'j_rotor': 0.3883,
+        'j_rotor': 0.03883,
         'r_s': 18e-3,
         'psi_p': 66e-3,
     }
     HAS_JACOBIAN = True
-    _default_limits = dict(omega=12e3 * np.pi / 30, torque=0.0, i=400, epsilon=math.pi, u=300)
+    _default_limits = dict(omega=5e3 * np.pi / 30, torque=0.0, i=400, epsilon=math.pi, u=300)
     _default_nominal_values = dict(omega=3e3 * np.pi / 30, torque=0.0, i=240, epsilon=math.pi, u=300)
     _default_initializer = {
         'states':  {'i_sq': 0.0, 'i_sd': 0.0, 'epsilon': 0.0},

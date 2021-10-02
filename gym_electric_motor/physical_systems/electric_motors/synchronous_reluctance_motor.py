@@ -80,13 +80,14 @@ class SynchronousReluctanceMotor(SynchronousMotor):
     """
     HAS_JACOBIAN = True
 
-    #### Parameters taken from DOI: 10.1109/AMC.2008.4516099 (K. Malekian, M. R. Sharif, J. Milimonfared)
-    _default_motor_parameter = {'p': 4,
-                                'l_d': 10.1e-3,
-                                'l_q':  4.1e-3,
-                                'j_rotor': 0.8e-3,
-                                'r_s': 0.57
-                                }
+    # Parameters taken from DOI: 10.1109/AMC.2008.4516099 (K. Malekian, M. R. Sharif, J. Milimonfared)
+    _default_motor_parameter = {
+        'p': 4,
+        'l_d': 10.1e-3,
+        'l_q':  4.1e-3,
+        'j_rotor': 0.8e-3,
+        'r_s': 0.57
+    }
 
     _default_nominal_values = {'i': 10, 'torque': 0, 'omega': 3e3 * np.pi / 30, 'epsilon': np.pi, 'u': 80}
     _default_limits = {'i': 18, 'torque': 0, 'omega': 4.3e3 * np.pi / 30, 'epsilon': np.pi, 'u': 80}

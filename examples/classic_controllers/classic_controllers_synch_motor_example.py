@@ -17,8 +17,8 @@ if __name__ == '__main__':
                         'Finite'    Discrete Action Space
     """
 
-    motor_type = 'PMSM'
-    control_type = 'TC'
+    motor_type = 'SynRM'
+    control_type = 'SC'
     action_type = 'AbcCont'
 
     env_id = action_type + '-' + control_type + '-' + motor_type + '-v0'
@@ -47,12 +47,14 @@ if __name__ == '__main__':
         
     """
 
-    controller = Controller.make(env, external_ref_plots=external_ref_plots, torque_control='analytical')
+    controller = Controller.make(
+        env, external_ref_plots=external_ref_plots, torque_control='analytical', plot_torque=False
+    )
 
     state, reference = env.reset()
 
     # simulate the environment
-    for i in range(10001):
+    for i in range(50001):
         env.render()
         action = controller.control(state, reference)
         (state, reference), reward, done, _ = env.step(action)
