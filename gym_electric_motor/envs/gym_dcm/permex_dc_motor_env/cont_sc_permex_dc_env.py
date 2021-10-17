@@ -136,7 +136,7 @@ class ContSpeedControlDcPermanentlyExcitedMotorEnv(ElectricMotorEnvironment):
         )
         reference_generator = initialize(
             ReferenceGenerator, reference_generator, WienerProcessReferenceGenerator,
-            dict(reference_state='omega', sigma_range=(1e-3, 5e-2))
+            dict(reference_state='omega', sigma_range=(1e-3, 3e-2))
         )
         reward_function = initialize(
             RewardFunction, reward_function, WeightedSumOfErrors, dict(reward_weights=dict(omega=1.0))
