@@ -155,6 +155,11 @@ class ElectricMotorEnvironment(gym.core.Env):
         return self._reference_generator.reference_names
 
     @property
+    def referenced_states(self):
+        """Returns a list of state names of all states in the observation (called in state_filter) in the same order"""
+        return self._reference_generator.referenced_states
+
+    @property
     def nominal_state(self):
         """Returns a list of nominal values of all states in the observation (called in state_filter) in that order"""
         return self._physical_system.nominal_state[self.state_filter]

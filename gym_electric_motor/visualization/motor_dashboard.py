@@ -84,6 +84,7 @@ class MotorDashboard(ElectricMotorVisualization):
         self._plots = []
         self._k = 0
         self._update_render = False
+        self.env = None
 
     def on_reset_begin(self):
         """Called before the environment is reset. All subplots are reset."""
@@ -127,6 +128,20 @@ class MotorDashboard(ElectricMotorVisualization):
         if self._k % self._update_interval == 0:
             self._update_render = True
 
+    def add_plot(self, plot):
+        assert isinstance(plot, (TimePlot, EpisodePlot, StepPlot)), \
+            'The plot has to inherit from one of the base plot classes: TimePLot, EpisodePlot or StepPlot.'
+        assert self._time_plot_figure == self._step_plot_figure == self._episodic_plot_figure is None, \
+            'After initialization, no plots can be added to the dashboard.'
+        if isinstance(plot, TimePlot):
+            self._time_plots.append(plot)
+        elif isinstance(plot, EpisodePlot):
+            self._episodic_plots.append(plot)
+        else:
+            self._state_plots.append(plot)
+        self._plots.append(plot)
+        plot.set_env(self.env)
+
     def render(self):
         """Updates the plots every *update cycle* calls of this method."""
         if not (self._time_plot_figure or self._episodic_plot_figure or self._step_plot_figure) \
@@ -143,6 +158,7 @@ class MotorDashboard(ElectricMotorVisualization):
         Args:
             env(ElectricMotorEnvironment): The environment.
         """
+        self.env = env
         state_names = env.physical_system.state_names
         if self._state_plots == 'all':
             self._state_plots = state_names

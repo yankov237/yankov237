@@ -158,5 +158,14 @@ def update_parameter_dict(source_dict, update_dict, copy=True):
     return new_dict
 
 
+def concatenate_boxes(*boxes: gym.spaces.Box):
+    low = [box.low for box in boxes]
+    high = [box.high for box in boxes]
+    low = np.concatenate(low)
+    high = np.concatenate(high)
+    return gym.spaces.Box(low, high, dtype=np.float64)
+
+
 #: Short notation for the gym.make call to avoid the necessary import of gym when making environments.
 make = gym.make
+

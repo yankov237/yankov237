@@ -5,3 +5,4 @@ from .episode_length_plot import EpisodeLengthPlot
 from .mean_episode_reward_plot import MeanEpisodeRewardPlot
 from .reward_plot import RewardPlot
 from .state_plot import StatePlot
+from .flux_observer_plot import FluxObserverPlot

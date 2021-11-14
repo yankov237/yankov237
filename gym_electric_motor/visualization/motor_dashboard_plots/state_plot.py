@@ -75,14 +75,13 @@ class StatePlot(TimePlot):
         # Docstring of superclass
         super().set_env(env)
         ps = env.physical_system
-        rg = env.reference_generator
         # Save the index of the state.
         self._state_idx = ps.state_positions[self._state]
         # The maximal values of the state.
         self._limits = ps.limits[self._state_idx]
         self._state_space = ps.state_space.low[self._state_idx], ps.state_space.high[self._state_idx]
         # Bool: if the state is referenced.
-        self._referenced = rg.referenced_states[self._state_idx]
+        self._referenced = env.referenced_states[self._state_idx]
         # Bool: if the data is already normalized to an interval of [-1, 1]
         self._normalized = self._limits != self._state_space[1]
         self.reset_data()
