@@ -1,11 +1,9 @@
 import numpy as np
-from gym.spaces import Box
 import warnings
 
 import gym_electric_motor as gem
 from ..random_component import RandomComponent
 from ..core import PhysicalSystem
-from ..utils import set_state_array
 
 
 class SCMLSystem(PhysicalSystem, RandomComponent):
@@ -60,8 +58,10 @@ class SCMLSystem(PhysicalSystem, RandomComponent):
         self._electric_motor = motor
         self._mechanical_load = load
         self._supply = supply
-        state_names = load.state_names + motor.state_names + supply.state_names
+        state_names = load.state_names + motor.state_names + converter.state_names + supply.state_names
         self._ode_solver = ode_solver
+        self._motor_state = None
+        self._load_state = None
         if calc_jacobian is None:
             calc_jacobian = self._electric_motor.HAS_JACOBIAN and self._mechanical_load.HAS_JACOBIAN
         if calc_jacobian and self._electric_motor.HAS_JACOBIAN and self._mechanical_load.HAS_JACOBIAN:
@@ -126,9 +126,7 @@ class SCMLSystem(PhysicalSystem, RandomComponent):
         raise NotImplementedError
 
     def _set_indices(self):
-        """
-        Setting of indices to faster access the arrays during integration.
-        """
+        """Setting of indices to faster access the arrays during integration."""
         self._omega_ode_idx = self._mechanical_load.OMEGA_IDX
         self._load_ode_idx = list(range(len(self._mechanical_load.state_names)))
         self._ode_currents_idx = list(range(
@@ -159,7 +157,7 @@ class SCMLSystem(PhysicalSystem, RandomComponent):
         switching_times = self._converter.set_action(action, self._t)
 
         for t in switching_times:
-            i_in = self._electric_motor.i_in(motor_state)
+            i_in = self._electric_motor.i_in(self._motor_state)
             i_sup = self._converter.i_sup(i_in)
             u_sup = self._supply.get_voltage(self._t, i_sup)
             u_in = self._converter.convert(i_in, self._ode_solver.t)
@@ -244,26 +242,25 @@ class SCMLSystem(PhysicalSystem, RandomComponent):
              The new state of the system.
         """
         self.next_generator()
-        motor_state = self._electric_motor.reset(
+        self._motor_state = self._electric_motor.reset(
             state_space=self.state_space,
             state_positions=self.state_positions)
-        mechanical_state = self._mechanical_load.reset(
+        self._load_state = self._mechanical_load.reset(
             state_space=self.state_space,
             state_positions=self.state_positions,
             nominal_state=self.nominal_state)
-        ode_state = np.concatenate((mechanical_state, motor_state))
+        ode_state = np.concatenate((self._load_state, self._motor_state)) 
         u_sup = self.supply.reset()
         u_in = self.converter.reset()
         u_in = [u * u_s for u in u_in for u_s in u_sup]
-        torque = self.electric_motor.torque(motor_state)
+        torque = self.electric_motor.torque(self._motor_state)
         self._t = 0
         self._k = 0
         self._ode_solver.set_initial_value(ode_state, self._t)
         system_state = np.concatenate((
-            ode_state[:len(self._mechanical_load.state_names)],
-            [torque],
-            motor_state[self._electric_motor.CURRENTS_IDX],
-            u_in,
-            u_sup
+            self._mechanical_load.get_observation(self._load_state),
+            self._electric_motor.get_observation(self._motor_state),
+            self._converter.get_observation(),
+            self._supply.get_observation()
         ))
         return system_state / self._limits

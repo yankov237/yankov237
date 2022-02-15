@@ -1,8 +1,8 @@
 import numpy as np
 from ..testing_utils import DummyConverter, DummyLoad, DummyOdeSolver, DummyVoltageSupply, DummyElectricMotor,\
     mock_instantiate, instantiate_dict
-from gym_electric_motor.physical_systems import physical_systems as ps, converters as cv, electric_motors as em,\
-    mechanical_loads as ml, voltage_supplies as vs, solvers as sv
+from gym_electric_motor.physical_systems import converters as cv, electric_motors as em,\
+    mechanical_loads as ml, physical_systems as ps, voltage_supplies as vs, solvers as sv
 from gym.spaces import Box
 import pytest
 
