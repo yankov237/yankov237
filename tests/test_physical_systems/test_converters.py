@@ -1,4 +1,4 @@
-import gym_electric_motor.physical_systems.converters as cv
+import gym_electric_motor.physical_systems.converters.converters as cv
 from tests.testing_utils import PowerElectronicConverterWrapper, DummyConverter
 import gym_electric_motor as gem
 from functools import reduce

@@ -1,7 +1,7 @@
 import numpy as np
 import gym_electric_motor.envs
-from gym_electric_motor.physical_systems.solvers import *
-import gym_electric_motor.physical_systems.solvers as pss
+from gym_electric_motor.physical_systems.solvers.solvers import *
+import gym_electric_motor.physical_systems.solvers.solvers as pss
 from ..testing_utils import DummyScipyOdeSolver
 from ..conf import system, jacobian
 import pytest

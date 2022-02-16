@@ -510,9 +510,33 @@ class PhysicalSystem:
     def k(self):
         """
         Returns:
-             int: The current systems time step k.
+             int: The current episodes time step k.
         """
         return self._k
+    
+    @property
+    def k_cumulative(self):
+        """
+        Returns:
+             int: The current systems time step k across all episodes.
+        """
+        return self._k_cumulative
+    
+    @property
+    def t(self):
+        """
+        Returns:
+             float: The current episode time in seconds.
+        """
+        return self._t
+    
+    @property
+    def t_cumulative(self):
+        """
+        Returns:
+             float: The cumulative systems time across all episodes.
+        """
+        return self._t_cumulative
 
     @property
     def tau(self):
@@ -586,9 +610,8 @@ class PhysicalSystem:
         self._tau = tau
         self._k = 0
 
-    def reset(self, initial_state=None):
-        """
-        Reset the physical system to an initial state before a new episode starts.
+    def reset(self):
+        """Resets the physical system to an initial state before a new episode starts.
 
         Returns:
              element of state_space: The initial systems state
@@ -596,8 +619,8 @@ class PhysicalSystem:
         raise NotImplementedError
 
     def simulate(self, action):
-        """
-        Simulation of the Physical System for one time step with the input action.
+        """Simulation of the Physical System for one time step with the input action.
+
         This method is called in the environment in every step to update the systems state.
 
         Args:
@@ -608,10 +631,17 @@ class PhysicalSystem:
         """
         raise NotImplementedError
 
+    def _count_step(self):
+        """Helper function to increase the time and step counters."""
+        self._k += 1
+        self._k_cumulative += 1
+        self._t += self._tau
+        self._t_cumulative += self._tau
+
     def close(self):
-        """
+        """Closes the system and all of its submodules by closing files, saving logs etc.
+
         Called, when the environment is closed.
-        Close the System and all of its submodules by closing files, saving logs etc.
         """
         pass
 

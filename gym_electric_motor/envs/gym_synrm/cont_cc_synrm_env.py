@@ -1,6 +1,6 @@
 from gym_electric_motor.core import ElectricMotorEnvironment, ReferenceGenerator, RewardFunction, \
     ElectricMotorVisualization
-from gym_electric_motor.physical_systems.physical_systems import SynchronousMotorSystem
+from gym_electric_motor.physical_systems.scml_system import SynchronousMotorSystem
 from gym_electric_motor.visualization import MotorDashboard
 from gym_electric_motor.reference_generators import WienerProcessReferenceGenerator, MultipleReferenceGenerator
 from gym_electric_motor import physical_systems as ps

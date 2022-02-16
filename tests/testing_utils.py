@@ -5,8 +5,8 @@ from gym_electric_motor import ReferenceGenerator, RewardFunction, PhysicalSyste
     ConstraintMonitor
 from gym_electric_motor.physical_systems import PowerElectronicConverter, MechanicalLoad, ElectricMotor, OdeSolver, \
     VoltageSupply
-import gym_electric_motor.physical_systems.converters as cv
-from gym_electric_motor.physical_systems.physical_systems import SCMLSystem
+import gym_electric_motor.physical_systems.converters.converters as cv
+from gym_electric_motor.physical_systems.scml_system import SCMLSystem
 import numpy as np
 from gym.spaces import Box, Discrete
 from scipy.integrate import ode

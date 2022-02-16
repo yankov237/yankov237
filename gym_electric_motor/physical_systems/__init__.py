@@ -1,8 +1,8 @@
 
-from .physical_systems import DcMotorSystem, SynchronousMotorSystem, SquirrelCageInductionMotorSystem, DoublyFedInductionMotorSystem, \
+from .scml_system import DcMotorSystem, SynchronousMotorSystem, SquirrelCageInductionMotorSystem, DoublyFedInductionMotorSystem, \
     ExternallyExcitedSynchronousMotorSystem, ThreePhaseMotorSystem, SCMLSystem
 
-from .converters import PowerElectronicConverter, FiniteOneQuadrantConverter, FiniteTwoQuadrantConverter, \
+from .converters.converters import PowerElectronicConverter, FiniteOneQuadrantConverter, FiniteTwoQuadrantConverter, \
     FiniteFourQuadrantConverter, FiniteMultiConverter, FiniteB6BridgeConverter, ContOneQuadrantConverter, \
     ContTwoQuadrantConverter, ContFourQuadrantConverter, ContMultiConverter, ContB6BridgeConverter, NoConverter
 
@@ -14,7 +14,7 @@ from .electric_motors import DcExternallyExcitedMotor, DcSeriesMotor, DcPermanen
 from .mechanical_loads import MechanicalLoad, PolynomialStaticLoad, ExternalSpeedLoad, ConstantSpeedLoad, \
     OrnsteinUhlenbeckLoad
 
-from .solvers import OdeSolver, EulerSolver, ScipyOdeIntSolver, ScipySolveIvpSolver, ScipyOdeSolver
+from .solvers.solvers import OdeSolver, EulerSolver, ScipyOdeIntSolver, ScipySolveIvpSolver, ScipyOdeSolver
 
 from .voltage_supplies import VoltageSupply, IdealVoltageSupply, RCVoltageSupply, AC1PhaseSupply, AC3PhaseSupply
 

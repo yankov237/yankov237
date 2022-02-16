@@ -4,8 +4,7 @@ from .mechanical_load import MechanicalLoad
 
 
 class OrnsteinUhlenbeckLoad(MechanicalLoad):
-    """The Ornstein-Uhlenbeck Load sets the speed to a torque-independent signal specified by the underlying OU-Process.
-    """
+    """The Ornstein-Uhlenbeck Load sets the speed to a torque-independent signal specified by the underlying OU-Process."""
 
     HAS_JACOBIAN = False
 
