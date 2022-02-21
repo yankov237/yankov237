@@ -1,5 +1,5 @@
 from gym.spaces import Box
-from gym_electric_motor.physical_systems.solvers.solvers import EulerSolver
+from gym_electric_motor.physical_systems.ode_solvers.solvers import EulerSolver
 import warnings
 import numpy as np
 
@@ -13,6 +13,16 @@ class VoltageSupply:
     """
 
     @property
+    def u_sup(self):
+        """np.ndarray[float]: Currently supplied voltage."""
+        return self._u_sup
+
+    @property
+    def u_nominal(self):
+        """float: Nominal Voltage of the Voltage Supply"""
+        return self._u_nominal
+
+    @property
     def state_names(self):
         """Tuple(string): Names of the returned states."""
         return ()
@@ -23,19 +33,17 @@ class VoltageSupply:
         return Box(np.array([]),np.array([]), dtype=np.float64)
 
     @property
-    def u_nominal(self):
-        """
-        Returns:
-             float: Nominal Voltage of the Voltage Supply
-        """
-        return self._u_nominal
-
-    def __init__(self, u_nominal):
+    def supply_space(self):
+        """gym.spaces.Box: Space of the supplied voltage."""
+        return Box(-1, 1, shape=(1,), dtype=np.float64)
+    
+    def __init__(self, u_nominal, shape=(1,)):
         """
         Args:
             u_nominal(float): Nominal voltage of the Voltage Supply.
         """
         self._u_nominal = u_nominal
+        self._u_sup = None
 
     def reset(self):
         """Resets the voltage supply to an initial state.
@@ -44,7 +52,7 @@ class VoltageSupply:
         """
         pass
 
-    def get_voltage(self, t, i_sup):
+    def get_u_sup(self, t, i_sup):
         """
         Get the supply voltage based on the floating supply current i_sup, the time t and optional further arguments.
 
@@ -65,7 +73,7 @@ class VoltageSupply:
             i_sup(float): Supply current floating into the system.
         
         Returns:
-            Element of state_space: The observation for the physical system.
+            numpy.ndarray[float]: The observation for the physical system.
         """
         return np.array([])
 

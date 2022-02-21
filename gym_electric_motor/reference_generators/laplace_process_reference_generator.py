@@ -1,6 +1,6 @@
 import numpy as np
 
-from ..random_component import RandomComponent
+from ..core.random_component import RandomComponent
 from .subepisoded_reference_generator import SubepisodedReferenceGenerator
 
 

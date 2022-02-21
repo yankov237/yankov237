@@ -1,6 +1,6 @@
 
-from .scml_system import DcMotorSystem, SynchronousMotorSystem, SquirrelCageInductionMotorSystem, DoublyFedInductionMotorSystem, \
-    ExternallyExcitedSynchronousMotorSystem, ThreePhaseMotorSystem, SCMLSystem
+from .scml_system import SCMLSystem
+from .scml_component import SCMLComponent
 
 from .converters.converters import PowerElectronicConverter, FiniteOneQuadrantConverter, FiniteTwoQuadrantConverter, \
     FiniteFourQuadrantConverter, FiniteMultiConverter, FiniteB6BridgeConverter, ContOneQuadrantConverter, \
@@ -14,7 +14,7 @@ from .electric_motors import DcExternallyExcitedMotor, DcSeriesMotor, DcPermanen
 from .mechanical_loads import MechanicalLoad, PolynomialStaticLoad, ExternalSpeedLoad, ConstantSpeedLoad, \
     OrnsteinUhlenbeckLoad
 
-from .solvers.solvers import OdeSolver, EulerSolver, ScipyOdeIntSolver, ScipySolveIvpSolver, ScipyOdeSolver
+from .ode_solvers.solvers import OdeSolver, EulerSolver, ScipyOdeIntSolver, ScipySolveIvpSolver, ScipyOdeSolver
 
 from .voltage_supplies import VoltageSupply, IdealVoltageSupply, RCVoltageSupply, AC1PhaseSupply, AC3PhaseSupply
 
@@ -27,12 +27,6 @@ register_superclass(MechanicalLoad)
 register_superclass(ElectricMotor)
 register_superclass(OdeSolver)
 register_superclass(VoltageSupply)
-
-
-register_class(DcMotorSystem, PhysicalSystem, 'DcMotorSystem')
-register_class(SynchronousMotorSystem, PhysicalSystem, 'SyncMotorSystem')
-register_class(SquirrelCageInductionMotorSystem, PhysicalSystem, 'SquirrelCageInductionMotorSystem')
-register_class(DoublyFedInductionMotorSystem, PhysicalSystem, 'DoublyFedInductionMotorSystem')
 
 register_class(FiniteOneQuadrantConverter, PowerElectronicConverter, 'Finite-1QC')
 register_class(ContOneQuadrantConverter, PowerElectronicConverter, 'Cont-1QC')
@@ -64,7 +58,6 @@ register_class(ExternallyExcitedSynchronousMotor, ElectricMotor, 'EESM')
 register_class(SynchronousReluctanceMotor, ElectricMotor, 'SynRM')
 register_class(SquirrelCageInductionMotor, ElectricMotor, 'SCIM')
 register_class(DoublyFedInductionMotor, ElectricMotor, 'DFIM')
-
 
 register_class(IdealVoltageSupply, VoltageSupply, 'IdealVoltageSupply')
 register_class(RCVoltageSupply, VoltageSupply, 'RCVoltageSupply')

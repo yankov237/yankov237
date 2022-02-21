@@ -4,43 +4,28 @@ from .mechanical_load import MechanicalLoad
 
 
 class ConstantSpeedLoad(MechanicalLoad):
-    """
-       Constant speed mechanical load system which will always set the speed
-       to a predefined value.
-    """
+    """Constant speed mechanical load system which will always set the speed to a fixed value."""
 
     HAS_JACOBIAN = True
-    _default_initializer = {
-        'states': {'omega': 0.0},
-        'interval': None,
-        'random_init': None,
-        'random_params': (None, None)
-    }
 
     @property
-    def omega_fixed(self):
+    def get_omega(self, load_state):
         """
         Returns:
             float: Constant value for omega in rad/s.
         """
         return self._omega
+    
+    def set_omega(self, omega):
+        self._omega = float(omega)
 
-    def __init__(self, omega_fixed=0, load_initializer=None, **kwargs):
+    def __init__(self, omega_fixed=0, j_load=0.0):
         """
         Args:
             omega_fixed(float)): Fix value for the speed in rad/s.
         """
-        super().__init__(load_initializer=load_initializer, **kwargs)
-        self._omega = omega_fixed or self._initializer['states']['omega']
-        if omega_fixed != 0:
-            self._initializer['states']['omega'] = omega_fixed
-        self._ode_result = np.array([0.])
-        self._jacobian_result = (np.array([[0.]]), np.array([0.]))
+        super().__init__(j_load=j_load)
+        self._omega = omega_fixed 
 
-    def mechanical_ode(self, *_, **__):
-        # Docstring of superclass
-        return self._ode_result
-
-    def mechanical_jacobian(self, t, mechanical_state, torque):
-        # Docstring of superclass
-        return self._jacobian_result
+    def get_observation(self, load_state):
+        return self._omega

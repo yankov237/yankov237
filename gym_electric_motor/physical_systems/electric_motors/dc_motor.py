@@ -1,3 +1,4 @@
+import gym
 import numpy as np
 
 from .electric_motor import ElectricMotor
@@ -51,9 +52,6 @@ class DcMotor(ElectricMotor):
     # Indices for array accesses
     I_A_IDX = 0
     I_E_IDX = 1
-    CURRENTS_IDX = [0, 1]
-    CURRENTS = ['i_a', 'i_e']
-    VOLTAGES = ['u_a', 'u_e']
 
     # Motor parameter, nominal values and limits are based on the following DC Motor:
     # https://www.heinzmann-electric-motors.com/en/products/dc-motors/pmg-132-dc-motor
@@ -62,16 +60,25 @@ class DcMotor(ElectricMotor):
     }
     _default_nominal_values = dict(omega=300, torque=16.0, i=97, i_a=97, i_e=97, u=60, u_a=60, u_e=60)
     _default_limits = dict(omega=400, torque=38.0, i=210, i_a=210, i_e=210, u=60, u_a=60, u_e=60)
-    _default_initializer = {'states': {'i_a': 0.0, 'i_e': 0.0},
-                            'interval': None,
-                            'random_init': None,
-                            'random_params': (None, None)}
+
+    @property
+    def observation_names(self):
+        return ['i_a', 'i_e', 'u_a', 'u_e']
+    
+    @property
+    def motor_state_size(self):
+        return 2
+
+    @property
+    def observation_space(self):
+        return gym.spaces.Box(-1, 1, shape=(4,))
 
     def __init__(self, motor_parameter=None, nominal_values=None, limit_values=None, motor_initializer=None):
         # Docstring of superclass
         super().__init__(motor_parameter, nominal_values, limit_values, motor_initializer)
         #: Matrix that contains the constant parameters of the systems equation for faster computation
         self._model_constants = None
+        self._model_variables = None
         self._update_model()
         self._update_limits()
 
@@ -89,60 +96,41 @@ class DcMotor(ElectricMotor):
         )
         self._model_constants[self.I_A_IDX] = self._model_constants[self.I_A_IDX] / mp['l_a']
         self._model_constants[self.I_E_IDX] = self._model_constants[self.I_E_IDX] / mp['l_e']
+        self._model_variables = np.zeros(self._model_constants.shape[-1])
 
-    def torque(self, currents):
+    def torque(self, motor_state):
         # Docstring of superclass
-        return self._motor_parameter['l_e_prime'] * currents[self.I_A_IDX] * currents[self.I_E_IDX]
+        return self._motor_parameter['l_e_prime'] * motor_state[self.I_A_IDX] * motor_state[self.I_E_IDX]
 
-    def i_in(self, currents):
+    def i_in(self, motor_state):
         # Docstring of superclass
-        return list(currents)
+        return list(motor_state)
 
-    def electrical_ode(self, state, u_in, omega, *_):
+    def electrical_ode(self, motor_state, omega):
         # Docstring of superclass
+        self._model_variables[:] = [
+            motor_state[self.I_A_IDX],
+            motor_state[self.I_E_IDX],
+            omega * motor_state[self.I_E_IDX],
+            self._u_in[0],
+            self._u_in[1],
+        ]
         return np.matmul(
             self._model_constants,
-            np.array([
-                state[self.I_A_IDX],
-                state[self.I_E_IDX],
-                omega * state[self.I_E_IDX],
-                u_in[0],
-                u_in[1],
-            ])
+            self._model_variables
         )
 
-    def get_state_space(self, input_currents, input_voltages):
-        """
-        Calculate the possible normalized state space for the motor as a tuple of dictionaries "low" and "high".
-
-        Args:
-            input_currents: Tuple of the two converters possible output currents.
-            input_voltages: Tuple of the two converters possible output voltages.
-
-        Returns:
-             tuple(dict,dict): Dictionaries defining if positive and negative values are possible for each motors state.
-        """
-        a_converter = 0
-        e_converter = 1
-        low = {
-            'omega': -1 if input_voltages.low[a_converter] == -1
-                           or input_voltages.low[e_converter] == -1 else 0,
-            'torque': -1 if input_currents.low[a_converter] == -1
-                            or input_currents.low[e_converter] == -1 else 0,
-            'i_a': -1 if input_currents.low[a_converter] == -1 else 0,
-            'i_e': -1 if input_currents.low[e_converter] == -1 else 0,
-            'u_a': -1 if input_voltages.low[a_converter] == -1 else 0,
-            'u_e': -1 if input_voltages.low[e_converter] == -1 else 0,
-        }
-        high = {
-            'omega': 1,
-            'torque': 1,
-            'i_a': 1,
-            'i_e': 1,
-            'u_a': 1,
-            'u_e': 1
-        }
-        return low, high
+    def electrical_jacobian(self, state, omega):
+        mp = self._motor_parameter
+        return (
+            np.array([
+                [-mp['r_a'] / mp['l_a'], -mp['l_e_prime'] / mp['l_a'] * omega],
+                [0, -mp['r_e'] / mp['l_e']]
+            ]),
+            np.array([-mp['l_e_prime'] * state[self.I_E_IDX] / mp['l_a'], 0]),
+            np.array([mp['l_e_prime'] * state[self.I_E_IDX],
+                      mp['l_e_prime'] * state[self.I_A_IDX]])
+        )
 
     def _update_limits(self, limits_d=None, nominal_d=None):
         # Docstring of superclass

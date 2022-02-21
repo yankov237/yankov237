@@ -1,7 +1,7 @@
 import numpy as np
 from gym.spaces import Box
 
-from ..random_component import RandomComponent
+from ..core.random_component import RandomComponent
 from ..core import ReferenceGenerator
 from ..utils import instantiate
 

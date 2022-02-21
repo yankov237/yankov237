@@ -1,3 +1,5 @@
+import numpy as np
+
 from gym_electric_motor.physical_systems.voltage_supplies import VoltageSupply
 
 
@@ -10,7 +12,7 @@ class IdealVoltageSupply(VoltageSupply):
         self._observation = np.array([u_nominal])
         self._voltage = [self.u_nominal]
 
-    def get_voltage(self, t, i_sup):
+    def get_u_sup(self, t, i_sup):
         # Docstring of superclass
         return [self._u_nominal]
 

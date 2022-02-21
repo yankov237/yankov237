@@ -5,9 +5,7 @@ from .mechanical_load import MechanicalLoad
 
 
 class ExternalSpeedLoad(MechanicalLoad):
-    """
-       External speed mechanical load system which will set the speed to a
-       predefined speed-function/ speed-profile.
+    """External speed mechanical load system which will set the speed to a predefined speed-function/ speed-profile.
     """
 
     HAS_JACOBIAN = False
@@ -20,7 +18,7 @@ class ExternalSpeedLoad(MechanicalLoad):
         """
         return self._omega_initial
 
-    def __init__(self, speed_profile, load_initializer=None, tau=1e-4, speed_profile_kwargs=None, **kwargs):
+    def __init__(self, speed_profile, tau=1e-4, speed_profile_kwargs=None, **kwargs):
         """
         Args:
             speed_profile(float -> float): A callable(t, **speed_profile_args) -> float
