@@ -69,9 +69,8 @@ class ContMultiConverter(ContDynamicallyAveragedConverter):
         voltages_high = np.concatenate(voltages_high)
 
         # put limits into gym_space format
-        self.action_space = Box(action_space_low, action_space_high, dtype=np.float64)
-        self.currents = Box(currents_low, currents_high, dtype=np.float64)
-        self.voltages = Box(voltages_low, voltages_high, dtype=np.float64)
+        self.action_space = gym.spaces.Box(action_space_low, action_space_high, dtype=np.float64)
+        
 
     def set_action(self, action, t):
         # Docstring in base class

@@ -3,3 +3,4 @@ from .continuous_one_quadrant_converter import ContOneQuadrantConverter
 from .continuous_two_quadrant_converter import ContTwoQuadrantConverter
 from .continuous_four_quadrant_converter import ContFourQuadrantConverter
 from .continuous_b6_bridge_converter import ContB6BridgeConverter
+from .continuous_multi_converter import ContMultiConverter

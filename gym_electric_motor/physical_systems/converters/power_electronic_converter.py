@@ -5,62 +5,62 @@ from gym_electric_motor.physical_systems import SCMLComponent
 
 
 class PowerElectronicConverter(SCMLComponent):
-    """Base class for all converters in a SCMLSystem.
- 
-    Properties:
-        | *voltages(tuple(float, float))*: Determines which output voltage polarities the converter can generate.
-        | E.g. (0, 1) - Only positive voltages / (-1, 1) Positive and negative voltages
+    """Base class for all converters in a SCMLSystem."""
 
-        | *currents(tuple(float, float))*: Determines which output current polarities the converter can generate.
-        | E.g. (0, 1) - Only positive currents / (-1, 1) Positive and negative currents
-    """
+    @property
+    def action_space(self):
+        raise NotImplementedError
 
+    @property
+    def action(self):
+        return self._action
+
+    @property
+    def output_shape(self):
+        raise NotImplementedError
+
+    @property
+    def supply_shape(self):
+        raise NotImplementedError
+
+    @property
+    def tau(self):
+        return self._tau
     
-    #: gym.Space that defines the set of all possible actions for the converter
-    action_space = None
-
-    #: gym.Space that defines the space of output voltages
-    voltage_space = gym.spaces.Box(-1, 1, shape=(1,), dtype=np.float64)
-
-    #: gym.Space that defines the space of output currents
-    current_space = gym.spaces.Box(-1, 1, shape=(1,), dtype=np.float64)
-    
-    #: gym.Space that defines the space of supply voltages
-    supply_voltage_space = gym.spaces.Box(-1, 1, shape=(1,), dtype=np.float64)
+    @tau.setter
+    def tau(self, value):
+        self._tau = float(value)
     
     #: Default action that is taken after a reset.
     _reset_action = None
 
-    def __init__(self, tau, interlocking_time=0.0):
+    def __init__(self):
         """
         Args:
             tau(float): Discrete time step of the system in seconds
-            interlocking_time(float): Interlocking time of the transistors in seconds
         """
-        self._tau = tau
-        self._interlocking_time = interlocking_time
+        self.tau = 1e-4
         self._action_start_time = 0.0
-        self._current_action = self._reset_action
+        self._action = self._reset_action
 
     def reset(self):
-        """Reset all converter states to a default."""
-        self._current_action = self._reset_action
+        """Resets all converter states to a default."""
+        self._action = self._reset_action
         self._action_start_time = 0.0
-        return [0.0]
 
-    def set_action(self, action, t):
+    def set_action(self, t, action):
         """Sets the next action of the converter at the beginning of a simulation step in the system.
 
         Args:
-            action(element of action_space): The control action on the converter.
             t(float): Time at the beginning of the simulation step in seconds.
+            action(element of action_space): The control action on the converter.
 
         Returns:
             list(float): Times when a switching action occurs and the conversion function must be called by the system.
         """
         self._action_start_time = t
         self._current_action = action
-        return self._set_switching_pattern(action)
+        return self._set_switching_pattern(t, action)
 
     def i_sup(self, i_out):
         """Calculates the current, the converter takes from the supply for the given output currents and the current switching state.
@@ -81,15 +81,15 @@ class PowerElectronicConverter(SCMLComponent):
 
         Args:
             t(float): Current time of the system.
-            i_out(list(float)): All currents that flow out of the converter into the motor.
-            u_in(list(float) / float): All supply voltages.
+            i_out(np.ndarray[float]): All currents that flow out of the converter into the motor.
+            u_in(np.ndarray[float]): All supply voltages.
 
         Returns:
-             list(float): List of all input voltages at the motor.
+             np.ndarray(float): All input voltages to the motor.
         """
         raise NotImplementedError
 
-    def _set_switching_pattern(self, action):
+    def _set_switching_pattern(self, t, action):
         """Method to calculate the switching pattern and corresponding switching times for the next time step.
         
         At least, the next time step [t + tau] is returned.
@@ -97,5 +97,5 @@ class PowerElectronicConverter(SCMLComponent):
         Returns:
              list(float): Switching times.
         """
-        self._switching_pattern = [action]
-        return [self._action_start_time + self._tau]
+        self._switching_pattern = (action,)
+        return []

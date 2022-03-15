@@ -38,9 +38,8 @@ class DcPermanentlyExcitedMotor(DcMotor):
     ======== ===========================================================
     """
     I_IDX = 0
-    CURRENTS_IDX = [0]
-    CURRENTS = ['i']
-    VOLTAGES = ['u']
+    U_IDX = 0
+    
     HAS_JACOBIAN = True
 
     # Motor parameter, nominal values and limits are based on the following DC Motor:
@@ -50,19 +49,11 @@ class DcPermanentlyExcitedMotor(DcMotor):
     }
     _default_nominal_values = dict(omega=300, torque=16.0, i=97, u=60)
     _default_limits = dict(omega=400, torque=38.0, i=210, u=60)
-    _default_initializer = {
-        'states': {'i': 0.0},
-        'interval': None,
-        'random_init': None,
-        'random_params': (None, None)
-    }
+    
 
-    # placeholder for omega, currents and u_in
-    _ode_placeholder = np.zeros(2 + len(CURRENTS_IDX), dtype=np.float64)
-
-    def torque(self, state):
+    def torque(self, motor_state):
         # Docstring of superclass
-        return self._motor_parameter['psi_e'] * state[self.I_IDX]
+        return self._motor_parameter['psi_e'] * motor_state[[self.I_IDX]]
 
     def _update_model(self):
         # Docstring of superclass
@@ -72,14 +63,18 @@ class DcPermanentlyExcitedMotor(DcMotor):
         ])
         self._model_constants[self.I_IDX] /= mp['l_a']
 
-    def i_in(self, state):
+    def i_in(self, t, motor_state):
         # Docstring of superclass
-        return state[self.CURRENTS_IDX]
+        return motor_state
 
-    def electrical_ode(self, state, u_in, omega, *_):
+    def electrical_ode(self, motor_state, omega):
         # Docstring of superclass
-        self._ode_placeholder[:] = [omega] + np.atleast_1d(state[self.I_IDX]).tolist() + [u_in[0]]
-        return np.matmul(self._model_constants, self._ode_placeholder)
+        self._model_variables[:] = [
+            omega[0],
+            motor_state[self.I_IDX],
+            self._u_in[self.U_IDX]
+        ]
+        return np.matmul(self._model_constants, self._model_variables)
 
     def electrical_jacobian(self, state, u_in, omega, *_):
         mp = self._motor_parameter

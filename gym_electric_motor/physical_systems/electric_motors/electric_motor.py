@@ -1,12 +1,13 @@
+from email.policy import default
 import numpy as np
-from scipy.stats import truncnorm
+from typing import Dict
 
-from ...core.random_component import RandomComponent
-
+from gym_electric_motor.core.random_component import RandomComponent
+from gym_electric_motor.physical_systems import SCMLComponent
 from gym_electric_motor.utils import update_parameter_dict
 
 
-class ElectricMotor(RandomComponent):
+class ElectricMotor(SCMLComponent, RandomComponent):
     """Base class for all technical electrical motor models.
 
         A motor consists of the ode-state. These are the dynamic quantities of its ODE.
@@ -30,33 +31,42 @@ class ElectricMotor(RandomComponent):
     _default_limits = {}
 
     @property
-    def ode_size(self):
-        raise NotImplementedError
+    def limits(self):
+        return self._limits
 
     @property
-    def motor_parameter(self):
-        """
-        Returns:
-             dict(float): The motors parameter dictionary
-        """
+    def nominal_state(self):
+        return self._nominal_state
+
+    @property
+    def motor_parameter(self) -> Dict[float]:
+        """Dict[float]: The motor parameter dictionary containing its parameters like resistances, inductances etc."""
         return self._motor_parameter
 
     def __init__(self, motor_parameter=None, nominal_values=None, limit_values=None):
         """
         Args:
-            motor_parameter(dict(float)): Motor parameter dictionary. Contents specified
-                for each motor.
+            motor_parameter(dict(float)): Motor parameter dictionary. Contents specified for each motor.
             nominal_values(dict(float)): Nominal values for the motor quantities.
             limit_values(dict(float)): Limits for the motor quantities.
         """
+        SCMLComponent.__init__(self)
         RandomComponent.__init__(self)
         motor_parameter = motor_parameter or {}
         self._motor_parameter = update_parameter_dict(self._default_motor_parameter, motor_parameter)
+
         limit_values = limit_values or {}
-        self._limits = update_parameter_dict(self._default_limits, limit_values)
         nominal_values = nominal_values or {}
-        self._nominal_values = update_parameter_dict(self._default_nominal_values, nominal_values)
-        self._u_in = None
+        
+        _limits = self._default_limits.copy()
+        _nominals = self._default_nominal_values.copy()
+
+        _limits = update_parameter_dict(self._default_limits, limit_values)
+        _nominals = update_parameter_dict(self._default_nominal_values, nominal_values)
+
+        self._limits = np.array([_limits[obs] for obs in self.observation_names])
+        self._nominal_state = np.array([_nominals[obs] for obs in self.observation_names])
+
 
     def electrical_ode(self, motor_state, omega):
         """Calculation of the derivatives of each motor state variable for the given inputs / The motors ODE-System.
@@ -97,7 +107,7 @@ class ElectricMotor(RandomComponent):
         """
         self.next_generator()
         
-    def i_in(self, motor_state):
+    def i_in(self, t, motor_state):
         """
         Args:
             motor_state(ndarray(float)): ODE state of the motor
@@ -113,4 +123,4 @@ class ElectricMotor(RandomComponent):
         Args:
             u_in: Applied input voltage
         """
-        self._u_in = u_in
+        raise NotImplementedError

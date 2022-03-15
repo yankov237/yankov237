@@ -21,13 +21,37 @@ class SCMLSystem(PhysicalSystem, RandomComponent):
         self._initial_ode_value[:] = value
 
     @property
+    def observation_names(self):
+      return [name for comp in self._scml_components for name in comp.observation_names]
+    
+    @property
+    def observation_units(self):
+      return [unit for comp in self._scml_components for unit in comp.observation_units]
+
+    @property
+    def observation_tex_names(self):
+      return [tex_name for comp in self._scml_components for tex_name in comp.observation_tex_names]
+    
+    @property
+    def observation_tex_units(self):
+      return [tex_unit for comp in self._scml_components for tex_unit in comp.observation_tex_units]
+
+    @property
     def limits(self):
+      if self._limits is not None:  
         return self._limits
+      else:
+          self._limits = np.array([limit for comp in self._scml_components for limit in comp.limits])
+          return self._limits
 
     @property
     def nominal_state(self):
+      if self._nominal_state is not None:  
         return self._nominal_state
-
+      else:
+          self._nominal_state = np.array([nom_state for comp in self._scml_components for nom_state in comp.nominal_state])
+          return self._nominal_state
+    
     @property
     def supply(self):
         """The voltage supply instance in the physical system"""
@@ -48,7 +72,16 @@ class SCMLSystem(PhysicalSystem, RandomComponent):
         """The mechanical load instance in the system"""
         return self._mechanical_load
 
-    def __init__(self, converter, motor, load, supply, ode_solver, tau=1e-4, calc_jacobian=None):
+    def __init__(
+        self,
+        converter: gem.physical_systems.PowerElectronicConverter,
+        motor: gem.physical_systems.ElectricMotor,
+        load: gem.physical_systems.MechanicalLoad,
+        supply: gem.physical_systems.VoltageSupply,
+        ode_solver: gem.physical_systems.OdeSolver,
+        tau : float =1e-4,
+        calc_jacobian : bool = None
+    ):
         """
         Args:
             converter(PowerElectronicConverter): Converter for the system
@@ -67,14 +100,21 @@ class SCMLSystem(PhysicalSystem, RandomComponent):
         self._supply = supply
         self._ode_solver = ode_solver
         self._scml_components = [load, motor, converter, supply]
+        
+        assert self._supply.shape == self._converter.input_shape
+        assert self._converter.output_shape == self._electric_motor.input_shape
+        assert self._motor.torque_shape == self._mechanical_load.omega_shape
+
         self._random_components = [
             self._supply, self._converter, self._electric_motor, self._mechanical_load, self._ode_solver
         ]
+
         self._motor_state = None
         self._load_state = None
 
         if calc_jacobian is None:
             calc_jacobian = self._electric_motor.HAS_JACOBIAN and self._mechanical_load.HAS_JACOBIAN
+        
         if calc_jacobian and self._electric_motor.HAS_JACOBIAN and self._mechanical_load.HAS_JACOBIAN:
             jac = self._system_jacobian
         else:
@@ -97,7 +137,7 @@ class SCMLSystem(PhysicalSystem, RandomComponent):
         self._motor_ode_slice = slice(load.ode_size, load.ode_size + motor.ode_size)
 
         self._limits = [limit for component in self._scml_components for limit in component.limits]
-        self._nominal_state = [nominal_value for component in self._scml_components for nominal_value in component.nominal_values]
+        self._nominal_state = [nominal_value for component in self._scml_components for nominal_value in component.nominal_state]
 
         self.system_observation = np.zeros_like(state_observation_names, dtype=float)
         self._system_derivative = np.zeros(load.ode_size + motor.ode_size)
@@ -112,7 +152,7 @@ class SCMLSystem(PhysicalSystem, RandomComponent):
 
     def simulate(self, action):
         # Docstring of superclass        
-        switching_times = self._converter.set_action(action, self._t)
+        switching_times = self._converter.set_action(action, self._t) + [self._t + self._tau]
 
         for t in switching_times:
             i_in = self._electric_motor.i_in(self._motor_state)
@@ -128,10 +168,10 @@ class SCMLSystem(PhysicalSystem, RandomComponent):
 
 
         self.system_observation = np.concatenate((
-            self._mechanical_load.get_observation(self._load_state),
-            self._electric_motor.get_observation(self._motor_state),
-            self._converter.get_observation()
-            self._supply.get_observation()
+                self._mechanical_load.get_observation(self._load_state),
+                self._electric_motor.get_observation(self._motor_state),
+                self._converter.get_observation(),
+                self._supply.get_observation()
         ))
         return self.system_observation / self._limits
 
@@ -180,14 +220,13 @@ class SCMLSystem(PhysicalSystem, RandomComponent):
         Returns:
              numpy.ndarray[float]: The new state of the system.
         """
+        PhysicalSystem.reset(self)
         self.next_generator()
         self._mechanical_load.reset()
         self._electric_motor.reset()
         self._converter.reset()
         self._supply.reset()
 
-        self._t = 0
-        self._k = 0
         self._ode_solver.set_initial_value(self.initial_ode_value, self._t)
         self._motor_state = self._ode_solver.y[self._motor_state_slice]
         self._load_state = self._ode_solver.y[self._load_state_slice]

@@ -61,7 +61,7 @@ class RandomComponent:
         self._seed_sequence = np.random.SeedSequence()
         self._random_generator = np.random.default_rng(self._seed_sequence.spawn(1)[0])
 
-    def seed(self, seed=None):
+    def seed(self, seed : np.random.SeedSequence or None = None):
         """The function to set the seed.
 
         This function is called by within the global seed call of the environment. The environment passes the sub-seed

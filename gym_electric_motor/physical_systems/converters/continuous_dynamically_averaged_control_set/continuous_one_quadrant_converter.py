@@ -23,14 +23,14 @@ class ContOneQuadrantConverter(ContinuousDynamicallyAveragedConverter):
     currents = gym.spaces.Box(0, 1, shape=(1,), dtype=np.float64)
     action_space = gym.spaces.Box(0, 1, shape=(1,), dtype=np.float64)
 
-    def _convert(self, i_in, *_):
-        # Docstring in base class
-        return self._current_action[0] if i_in[0] >= 0 else 1
+    def __init__(self, shape=(1,), **kwargs):
+        super().__init__(**kwargs)
+        self._u_out = np.zeros(shape)
 
-    def _interlock(self, *_):
+    def convert(self, t, i_in, u_sup):
         # Docstring in base class
-        return 0
+        return np.where(i_in > 0, self._current_action * u_sup, u_sup)
 
     def i_sup(self, i_out):
         # Docstring in base class
-        return self._current_action[0] * i_out[0]
+        return self._current_action * i_out

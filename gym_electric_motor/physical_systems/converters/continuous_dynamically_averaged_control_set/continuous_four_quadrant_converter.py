@@ -32,15 +32,11 @@ class ContFourQuadrantConverter(ContDynamicallyAveragedConverter):
         super().__init__(**kwargs)
         self._subconverters = [ContTwoQuadrantConverter(**kwargs), ContTwoQuadrantConverter(**kwargs)]
 
-    def _convert(self, *_):
-        # Not used here
-        pass
-
     def reset(self):
         # Docstring in base class
         self._subconverters[0].reset()
         self._subconverters[1].reset()
-        return super().reset()
+        super().reset()
 
     def convert(self, i_out, t):
         # Docstring in base class

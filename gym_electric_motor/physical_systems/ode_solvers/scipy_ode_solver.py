@@ -1,3 +1,4 @@
+from urllib.parse import _NetlocResultMixinStr
 from scipy.integrate import ode
 
 from gym_electric_motor.physical_systems.ode_solvers import OdeSolver
@@ -8,9 +9,6 @@ class ScipyOdeSolver(OdeSolver):
 
     https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.ode.html
     """
-
-    #: Integrator object
-    _ode = None
 
     @property
     def t(self):
@@ -29,6 +27,7 @@ class ScipyOdeSolver(OdeSolver):
         self._solver = None
         self._solver_args = kwargs
         self._integrator = integrator
+        self._ode = None
 
     def set_system_equation(self, system_equation, jac=None):
         # Docstring of superclass

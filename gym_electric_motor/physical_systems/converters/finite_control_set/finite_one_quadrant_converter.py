@@ -1,4 +1,5 @@
 import gym
+import numpy as np
 from gym_electric_motor.physical_systems.converters.finite_control_set import FiniteConverter
 
 class FiniteOneQuadrantConverter(FiniteConverter):
@@ -26,8 +27,8 @@ class FiniteOneQuadrantConverter(FiniteConverter):
 
     def convert(self, t, i_out, u_sup):
         # Docstring in base class
-        return [self._current_action * u_sup[0] if i_out[0] >= 0 else u_sup[0]]
+        return np.zeros(1.) if i_out[0] >= 0 or self._current_action == 0 else u_sup
 
     def i_sup(self, i_out):
         # Docstring in base class
-        return i_out[0] if self._current_action == 1 else 0
+        return i_out if self._current_action == 1 else 0

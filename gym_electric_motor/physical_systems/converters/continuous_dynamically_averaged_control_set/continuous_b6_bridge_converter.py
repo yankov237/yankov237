@@ -68,10 +68,6 @@ class ContB6BridgeConverter(ContDynamicallyAveragedConverter):
         times += self._sub_converters[2].set_action([0.5 * (action[2] + 1)], t)
         return sorted(list(set(times)))
 
-    def _convert(self, i_in, t):
-        # Not used
-        pass
-
     def i_sup(self, i_out):
         # Docstring in base class
         return sum([subconverter.i_sup([i_out_]) for subconverter, i_out_ in zip(self._sub_converters, i_out)])

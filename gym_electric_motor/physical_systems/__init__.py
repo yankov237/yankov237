@@ -2,7 +2,7 @@
 from .scml_system import SCMLSystem
 from .scml_component import SCMLComponent
 
-from .converters.converters import PowerElectronicConverter, FiniteOneQuadrantConverter, FiniteTwoQuadrantConverter, \
+from .converters import PowerElectronicConverter, FiniteOneQuadrantConverter, FiniteTwoQuadrantConverter, \
     FiniteFourQuadrantConverter, FiniteMultiConverter, FiniteB6BridgeConverter, ContOneQuadrantConverter, \
     ContTwoQuadrantConverter, ContFourQuadrantConverter, ContMultiConverter, ContB6BridgeConverter, NoConverter
 
@@ -14,9 +14,9 @@ from .electric_motors import DcExternallyExcitedMotor, DcSeriesMotor, DcPermanen
 from .mechanical_loads import MechanicalLoad, PolynomialStaticLoad, ExternalSpeedLoad, ConstantSpeedLoad, \
     OrnsteinUhlenbeckLoad
 
-from .ode_solvers.solvers import OdeSolver, EulerSolver, ScipyOdeIntSolver, ScipySolveIvpSolver, ScipyOdeSolver
+from .ode_solvers import OdeSolver, EulerSolver, ScipyOdeIntSolver, ScipySolveIvpSolver, ScipyOdeSolver
 
-from .voltage_supplies import VoltageSupply, IdealVoltageSupply, RCVoltageSupply, AC1PhaseSupply, AC3PhaseSupply
+from .voltage_supplies import VoltageSupply, IdealVoltageSupply, RCVoltageSupply, ACSupply, ThreePhaseACSupply
 
 
 from ..utils import register_class, register_superclass
@@ -61,8 +61,8 @@ register_class(DoublyFedInductionMotor, ElectricMotor, 'DFIM')
 
 register_class(IdealVoltageSupply, VoltageSupply, 'IdealVoltageSupply')
 register_class(RCVoltageSupply, VoltageSupply, 'RCVoltageSupply')
-register_class(AC1PhaseSupply, VoltageSupply, 'AC1PhaseSupply')
-register_class(AC3PhaseSupply, VoltageSupply, 'AC3PhaseSupply')
+register_class(ACSupply, VoltageSupply, 'OnePhaseACSupply')
+register_class(ThreePhaseACSupply, VoltageSupply, 'ThreePhaseACSupply')
 
 
 

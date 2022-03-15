@@ -1,41 +1,30 @@
-class ThreePhaseACSupply(VoltageSupply):
-    """AC three phase voltage supply"""
-    voltage_len = 3
+import numpy as np
 
-    def __init__(self, u_nominal=400, supply_parameter=None):
+from gym_electric_motor.physical_systems.voltage_supplies import ACSupply
+
+class ThreePhaseACSupply(ACSupply):
+    """AC three phase voltage supply"""
+
+
+    def __init__(self, u_nominal=230, frequency=50, shape=(3,)):
         """
         Args:
-            u_nominal(float): Three phasic effective value of the voltage supply
-            supply_parameter(dict): Consists of frequency f in Hz and phase phi in range of [0,2*pi) in case you wish for a fixed phase
         """
-
-        super().__init__(u_nominal)
-        self._fixed_phi = False
-        if supply_parameter is not None:
-            assert isinstance(supply_parameter, dict), "supply_parameter should be a dict"
-            assert 'frequency' in supply_parameter.keys(), "Pass key 'frequency' for frequency f in Hz in your dict"
-            if 'phase' in supply_parameter.keys():
-                assert 0 <= supply_parameter['phase'] < 2*np.pi,\
-                    "The phase angle has to be given in rad in range [0,2*pi)"
-                self._fixed_phi = True
-                supply_parameter = supply_parameter
-            else:
-                supply_parameter['phase'] = np.random.rand()*2*np.pi
-        else:
-            supply_parameter = {'frequency': 50, 'phase': np.random.rand()*2*np.pi}
-
-        self._f = supply_parameter['frequency']
-        self._phi = supply_parameter['phase']
-        self._max_amp = self._u_nominal/np.sqrt(3)*np.sqrt(2)
-        self.supply_range = [-1*self._max_amp, self._max_amp]
+        super().__init__(u_nominal, frequency, shape)
+        assert len(self.supply_shape) == 1, 'The Three Phase AC supply does not support multidimensional shapes.'
+        assert self.supply_shape[-1] % 3 == 0, \
+            'The last dimension of the supply shape has to be a multiple of three.'
         
-    def reset(self):
-        # Docstring of superclass
-        if not self._fixed_phi:
-            self._phi = np.random.rand()*2*np.pi
-        return self.get_voltage(0)
-    
-    def get_voltage(self, t, *_, **__):
-        # Docstring of superclass
-        self._u_sup = [self._max_amp*np.sin(2*np.pi*self._f*t + self._phi + 2/3*np.pi*i) for i in range(3)]
-        return self._u_sup
+        phi_init = np.zeros(self.supply_shape, dtype=float)
+        first_phase_slice = slice(0, shape[0], 3)
+        second_phase_slice = slice(1, shape[0], 3)
+        third_phase_slice = slice(2, shape[0], 3)
+
+        def reset_phi_three_phase(*_):
+            phi_init[first_phase_slice] = np.random.rand(self.supply_shape[0] / 3)
+            temp = phi_init[first_phase_slice]
+            phi_init[second_phase_slice] = temp + 1/3
+            phi_init[third_phase_slice] = temp + 2/3
+            return 2 * np.pi * phi_init
+
+        self._reset_phi = reset_phi_three_phase

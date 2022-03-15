@@ -23,9 +23,12 @@ class ContTwoQuadrantConverter(ContDynamicallyAveragedConverter):
 
     action_space = gym.spaces.Box(0, 1, shape=(1,), dtype=np.float64)
 
-    def _convert(self, *_):
-        # Docstring in base class
-        return self._current_action[0]
+    def _add_interlock(self, func):
+        def _interlock(self, t, i_out, u_sup):
+            u_in = func(t, i_out, u_sup) - np.sign(i_out) / self._tau * self._interlocking_time
+            self._u_in[:] = np.clip(u_in, -u_sup, u_sup)
+            return self._u_in
+        return _interlock
 
     def i_sup(self, i_out):
         # Docstring in base class
