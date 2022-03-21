@@ -39,7 +39,7 @@ class ElectricMotor(SCMLComponent, RandomComponent):
         return self._nominal_state
 
     @property
-    def motor_parameter(self) -> Dict[float]:
+    def motor_parameter(self) -> dict:
         """Dict[float]: The motor parameter dictionary containing its parameters like resistances, inductances etc."""
         return self._motor_parameter
 

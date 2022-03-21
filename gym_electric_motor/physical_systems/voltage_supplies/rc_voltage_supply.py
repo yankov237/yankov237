@@ -1,7 +1,7 @@
 import warnings
 import numpy as np
 
-from gym_electric_motor.physical_systems.ode_solvers.solvers import EulerSolver
+from gym_electric_motor.physical_systems.ode_solvers import EulerSolver
 from gym_electric_motor.physical_systems.voltage_supplies import VoltageSupply
 
 

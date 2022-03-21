@@ -1,10 +1,11 @@
 import gym
 import numpy as np
 
-from gym_electric_motor.physical_systems.converters.continuous_dynamically_averaged_control_set import ContinuousDynamicallyAveragedConverter
+from gym_electric_motor.physical_systems.converters.continuous_dynamically_averaged_control_set\
+    .continuous_dynamically_averaged_converter import ContDynamicallyAveragedConverter
 
 
-class ContOneQuadrantConverter(ContinuousDynamicallyAveragedConverter):
+class ContOneQuadrantConverter(ContDynamicallyAveragedConverter):
     """
     Key:
         'Cont-1QC'

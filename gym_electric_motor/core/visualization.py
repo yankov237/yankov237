@@ -1,7 +1,7 @@
-import gym_electric_motor as gem
+from gym_electric_motor.core.callback import Callback
 
 
-class ElectricMotorVisualization(gem.core.Callback):
+class ElectricMotorVisualization(Callback):
     """Base class for all visualizations in gym-electric-motor.
 
     The visualization is basically only a Callback that is extended by a render() function to update the figure.

@@ -4,7 +4,7 @@ from .core import RewardFunction
 from .core import ElectricMotorVisualization
 from .core import ConstraintMonitor
 from .core.random_component import RandomComponent
-from .constraints import Constraint, LimitConstraint
+from .constraints import LimitConstraint, SquaredConstraint
 from .utils import make, register_superclass
 
 register_superclass(RewardFunction)
@@ -16,7 +16,7 @@ import gym_electric_motor.reference_generators
 import gym_electric_motor.reward_functions
 import gym_electric_motor.visualization
 import gym_electric_motor.physical_systems
-import gym_electric_motor.envs
+#import gym_electric_motor.envs
 import gym_electric_motor.state_action_processors
 
 from gym.envs.registration import register
@@ -27,8 +27,14 @@ from packaging import version
 # Deactivate the order enforce wrapper that is put around a created env per default from gym-version 0.21.0 onwards
 registration_kwargs = dict(order_enforce=False) if version.parse(gym.__version__) >= version.parse('0.21.0') else dict()
 
-envs_path = 'gym_electric_motor.envs:'
-
+envs_path = 'gym_electric_motor.envs'
+envs_path += '.gym_dcm.permex_dc_motor_env.cont_cc_permex_dc_env:'
+register(
+    id='Cont-CC-PermExDc-v0',
+    entry_point=envs_path+'ContCurrentControlDcPermanentlyExcitedMotorEnv',
+    **registration_kwargs
+)
+"""
 # Permanently Excited DC Motor Environments
 register(
     id='Finite-SC-PermExDc-v0',
@@ -315,3 +321,4 @@ register(
     entry_point=envs_path+'ContSpeedControlDoublyFedInductionMotorEnv',
     **registration_kwargs
 )
+"""

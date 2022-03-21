@@ -1,7 +1,7 @@
 from typing import Callable, Tuple
 import numpy as np
 
-from gym_electric_motor.physical_systems import VoltageSupply
+from gym_electric_motor.physical_systems.voltage_supplies.voltage_supply import VoltageSupply
 
 
 class ACSupply(VoltageSupply):

@@ -1,9 +1,14 @@
 import numpy as np
+from typing import TYPE_CHECKING
 import warnings
 
 import gym_electric_motor as gem
 from ..core.random_component import RandomComponent
 from ..core import PhysicalSystem
+
+if TYPE_CHECKING:
+    from gym_electric_motor.physical_systems import PowerElectronicConverter, \
+        ElectricMotor, MechanicalLoad, OdeSolver, VoltageSupply
 
 
 class SCMLSystem(PhysicalSystem, RandomComponent):
@@ -74,11 +79,11 @@ class SCMLSystem(PhysicalSystem, RandomComponent):
 
     def __init__(
         self,
-        converter: gem.physical_systems.PowerElectronicConverter,
-        motor: gem.physical_systems.ElectricMotor,
-        load: gem.physical_systems.MechanicalLoad,
-        supply: gem.physical_systems.VoltageSupply,
-        ode_solver: gem.physical_systems.OdeSolver,
+        converter: 'PowerElectronicConverter',
+        motor: 'ElectricMotor',
+        load: 'MechanicalLoad',
+        supply: 'VoltageSupply',
+        ode_solver: 'OdeSolver',
         tau : float =1e-4,
         calc_jacobian : bool = None
     ):

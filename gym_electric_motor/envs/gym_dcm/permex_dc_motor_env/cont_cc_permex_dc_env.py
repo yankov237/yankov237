@@ -1,6 +1,6 @@
 from gym_electric_motor.core import ElectricMotorEnvironment, ReferenceGenerator, RewardFunction, \
     ElectricMotorVisualization
-from gym_electric_motor.physical_systems.scml_system import DcMotorSystem
+from gym_electric_motor.physical_systems import SCMLSystem
 from gym_electric_motor.visualization import MotorDashboard
 from gym_electric_motor.reference_generators.wiener_process_reference_generator import WienerProcessReferenceGenerator
 from gym_electric_motor import physical_systems as ps
@@ -32,7 +32,7 @@ class ContCurrentControlDcPermanentlyExcitedMotorEnv(ElectricMotorEnvironment):
         - Constraints: :py:class:`.LimitConstraint` on the current  ``'i'``
 
     State Variables:
-        ``['omega' , 'torque', 'i', 'u', 'u_sup']``
+        ``['omega', 'torque', 'i', 'u', 'u_sup']``
 
     Reference Valiables:
         ``['i']``
@@ -124,7 +124,7 @@ class ContCurrentControlDcPermanentlyExcitedMotorEnv(ElectricMotorEnvironment):
             This class is then initialized with its default parameters.
             The available strings can be looked up in the documentation. (e.g. ``converter='Finite-2QC'``)
         """
-        physical_system = DcMotorSystem(
+        physical_system = SCMLSystem(
             supply=initialize(ps.VoltageSupply, supply, ps.IdealVoltageSupply, dict(u_nominal=60.0)),
             converter=initialize(ps.PowerElectronicConverter, converter, ps.ContFourQuadrantConverter, dict()),
             motor=initialize(ps.ElectricMotor, motor, ps.DcPermanentlyExcitedMotor, dict()),

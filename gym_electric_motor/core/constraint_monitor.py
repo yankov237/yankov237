@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, List, Callable, Iterable
 import gym_electric_motor as gem
 
 if TYPE_CHECKING:
-    from gym_electric_motor.core import Constraint
+    from gym_electric_motor.core import Constraint, PhysicalSystem
 
 
 class ConstraintMonitor:
@@ -78,7 +78,7 @@ class ConstraintMonitor:
         elif callable(merge_violations):
             self._merge_violations = merge_violations
 
-    def set_modules(self, ps: gem.core.PhysicalSystem):
+    def set_modules(self, ps: 'PhysicalSystem'):
         """The PhysicalSystem of the environment is passed to save important parameters like the index of the states.
 
         Args:

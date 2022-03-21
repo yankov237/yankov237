@@ -1,7 +1,7 @@
 import gym
 import numpy as np
 
-from gym_electric_motor.physical_systems import PowerElectronicConverter
+from gym_electric_motor.physical_systems.converters.power_electronic_converter import PowerElectronicConverter
 
 
 class NoConverter(PowerElectronicConverter):

@@ -1,6 +1,11 @@
+from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING
 import gym_electric_motor as gem
 
 import numpy as np
+
+if TYPE_CHECKING:
+    from gym_electric_motor.core import PhysicalSystem
 
 
 class Constraint:
@@ -20,7 +25,7 @@ class Constraint:
         """
         raise NotImplementedError
 
-    def set_modules(self, ps: gem.core.PhysicalSystem):
+    def set_modules(self, ps: 'PhysicalSystem'):
         """Called by the environment that the Constraint can read information from the PhysicalSystem.
 
         Args:
