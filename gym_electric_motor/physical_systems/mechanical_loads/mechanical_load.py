@@ -17,6 +17,10 @@ class MechanicalLoad(SCMLComponent, RandomComponent):
         return 0
 
     @property
+    def speed_shape(self):
+        raise NotImplementedError
+
+    @property
     def j_total(self):
         """
         Returns:

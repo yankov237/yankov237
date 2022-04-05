@@ -10,6 +10,14 @@ class ConstantSpeedLoad(MechanicalLoad):
     HAS_JACOBIAN = False
 
     @property
+    def limits(self):
+        return self._omega
+
+    @property
+    def nominal_state(self):
+        return self._omega
+
+    @property
     def observation_names(self):
         return ['omega']
     
@@ -40,8 +48,12 @@ class ConstantSpeedLoad(MechanicalLoad):
         else:
             omega = np.copy(value)
         self._shape = omega.shape
-        self._omega = np.asarray(value)
+        self._omega = np.asarray(omega)
 
+    @property
+    def speed_shape(self):
+        return self._shape
+        
     @property
     def get_omega(self, load_state):
         """

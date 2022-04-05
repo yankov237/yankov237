@@ -19,4 +19,4 @@ class ContDynamicallyAveragedConverter(PowerElectronicConverter):
 
     def set_action(self, action, t):
         # Docstring in base class
-        return super().set_action(t, np.clip(action, self._action_space.low, self._action_space.high))      
+        return super().set_action(t, np.clip(action, self.action_space.low, self.action_space.high))      

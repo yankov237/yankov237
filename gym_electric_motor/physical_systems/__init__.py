@@ -6,7 +6,7 @@ from .converters import PowerElectronicConverter, FiniteOneQuadrantConverter, Fi
     FiniteFourQuadrantConverter, FiniteMultiConverter, FiniteB6BridgeConverter, ContOneQuadrantConverter, \
     ContTwoQuadrantConverter, ContFourQuadrantConverter, ContMultiConverter, ContB6BridgeConverter, NoConverter
 
-from .electric_motors import DcExternallyExcitedMotor, DcSeriesMotor, DcPermanentlyExcitedMotor, DcShuntMotor, \
+from .electric_motors import DcExternallyExcitedMotor, DcSeriesMotor, PermanentlyExcitedDcMotor, DcShuntMotor, \
     PermanentMagnetSynchronousMotor, ElectricMotor, SynchronousReluctanceMotor, SquirrelCageInductionMotor, \
     DoublyFedInductionMotor, ExternallyExcitedSynchronousMotor, ThreePhaseMotor
 
@@ -50,7 +50,7 @@ register_class(ScipySolveIvpSolver, OdeSolver, 'scipy.solve_ivp')
 register_class(ScipyOdeIntSolver, OdeSolver, 'scipy.odeint')
 
 register_class(DcSeriesMotor, ElectricMotor, 'DcSeries')
-register_class(DcPermanentlyExcitedMotor, ElectricMotor, 'DcPermEx')
+register_class(PermanentlyExcitedDcMotor, ElectricMotor, 'DcPermEx')
 register_class(DcExternallyExcitedMotor, ElectricMotor, 'DcExtEx')
 register_class(DcShuntMotor, ElectricMotor, 'DcShunt')
 register_class(PermanentMagnetSynchronousMotor, ElectricMotor, 'PMSM')

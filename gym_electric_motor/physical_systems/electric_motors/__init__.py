@@ -4,7 +4,7 @@ from .electric_motor import ElectricMotor
 # DC Motors
 from .dc_motor import DcMotor
 from .dc_externally_excited_motor import DcExternallyExcitedMotor
-from .dc_permanently_excited_motor import DcPermanentlyExcitedMotor
+from .permanently_excited_dc_motor import PermanentlyExcitedDcMotor
 from .dc_series_motor import DcSeriesMotor
 from .dc_shunt_motor import DcShuntMotor
 

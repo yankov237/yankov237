@@ -1,11 +1,11 @@
 # Version 1
-from .gym_dcm.permex_dc_motor_env import ContSpeedControlDcPermanentlyExcitedMotorEnv
-from .gym_dcm.permex_dc_motor_env import FiniteSpeedControlDcPermanentlyExcitedMotorEnv
-from .gym_dcm.permex_dc_motor_env import ContTorqueControlDcPermanentlyExcitedMotorEnv
-from .gym_dcm.permex_dc_motor_env import FiniteTorqueControlDcPermanentlyExcitedMotorEnv
+#from .gym_dcm.permex_dc_motor_env import ContSpeedControlDcPermanentlyExcitedMotorEnv
+#from .gym_dcm.permex_dc_motor_env import FiniteSpeedControlDcPermanentlyExcitedMotorEnv
+#from .gym_dcm.permex_dc_motor_env import ContTorqueControlDcPermanentlyExcitedMotorEnv
+#from .gym_dcm.permex_dc_motor_env import FiniteTorqueControlDcPermanentlyExcitedMotorEnv
 from .gym_dcm.permex_dc_motor_env import ContCurrentControlDcPermanentlyExcitedMotorEnv
-from .gym_dcm.permex_dc_motor_env import FiniteCurrentControlDcPermanentlyExcitedMotorEnv
-
+#from .gym_dcm.permex_dc_motor_env import FiniteCurrentControlDcPermanentlyExcitedMotorEnv
+"""
 from .gym_dcm.extex_dc_motor_env import ContSpeedControlDcExternallyExcitedMotorEnv
 from .gym_dcm.extex_dc_motor_env import FiniteSpeedControlDcExternallyExcitedMotorEnv
 from .gym_dcm.extex_dc_motor_env import ContTorqueControlDcExternallyExcitedMotorEnv
@@ -61,3 +61,4 @@ from .gym_im import ContTorqueControlDoublyFedInductionMotorEnv
 from .gym_im import FiniteSpeedControlDoublyFedInductionMotorEnv
 from .gym_im import FiniteCurrentControlDoublyFedInductionMotorEnv
 from .gym_im import FiniteTorqueControlDoublyFedInductionMotorEnv
+"""

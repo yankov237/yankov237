@@ -1,10 +1,11 @@
+import gym
 import numpy as np
 
 from .dc_motor import DcMotor
 
 
-class DcPermanentlyExcitedMotor(DcMotor):
-    """The DcPermanentlyExcitedMotor is a DcMotor with a Permanent Magnet instead of the excitation circuit.
+class PermanentlyExcitedDcMotor(DcMotor):
+    """The PermanentlyExcitedDcMotor is a DcMotor with a Permanent Magnet instead of the excitation circuit.
 
     =====================  ==========  ============= ===========================================
     Motor Parameter        Unit        Default Value Description
@@ -50,6 +51,29 @@ class DcPermanentlyExcitedMotor(DcMotor):
     _default_nominal_values = dict(omega=300, torque=16.0, i=97, u=60)
     _default_limits = dict(omega=400, torque=38.0, i=210, u=60)
     
+    @property
+    def observation_names(self):
+        return ['torque', 'i', 'u']
+
+    @property
+    def ode_size(self) -> int:
+        return 1
+
+    @property
+    def observation_space(self):
+        return gym.spaces.Box(-1, 1, shape=(3,))
+
+    @property
+    def torque_shape(self):
+        return (1,)
+
+    @property
+    def input_shape(self):
+        return (1,)
+
+    def __init__(self, **kwargs):
+        self._observation = np.zeros_like(self.observation_names, dtype=float)
+        super().__init__(**kwargs)
 
     def torque(self, motor_state):
         # Docstring of superclass
@@ -84,31 +108,8 @@ class DcPermanentlyExcitedMotor(DcMotor):
             np.array([mp['psi_e']])
         )
 
-    def _update_limits(self):
-        # Docstring of superclass
-
-        # R_a might be 0, protect against that
-        r_a = 1 if self._motor_parameter['r_a'] == 0 else self._motor_parameter['r_a']
-
-        limits_agenda = {
-            'u': self._default_limits['u'],
-            'i': self._limits['u'] / r_a,
-        }
-        super()._update_limits(limits_agenda)
-
-    def get_state_space(self, input_currents, input_voltages):
-        # Docstring of superclass
-        lower_limit = 0
-        low = {
-            'omega': -1 if input_voltages.low[0] == -1 else 0,
-            'torque': -1 if input_currents.low[0] == -1 else 0,
-            'i': -1 if input_currents.low[0] == -1 else 0,
-            'u': -1 if input_voltages.low[0] == -1 else 0,
-        }
-        high = {
-            'omega': 1,
-            'torque': 1,
-            'i': 1,
-            'u': 1,
-        }
-        return low, high
+    def get_observation(self, state):
+        self._observation[[0]] = self.torque(state)
+        self._observation[[1]] = state
+        self._observation[[2]] = self._u_in
+        return self._observation

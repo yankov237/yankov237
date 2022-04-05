@@ -31,6 +31,14 @@ class ElectricMotor(SCMLComponent, RandomComponent):
     _default_limits = {}
 
     @property
+    def input_shape(self):
+        raise NotImplementedError
+
+    @property
+    def torque_shape(self):
+        raise NotImplementedError
+
+    @property
     def limits(self):
         return self._limits
 

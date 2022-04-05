@@ -166,7 +166,7 @@ class ElectricMotorEnvironment(gym.Env):
 
         # Initialization of the state filter and the spaces
         self.observation_space = gym.spaces.Tuple((
-            self.physical_system.state_space,
+            self.physical_system.state_observation_space,
             self._reference_generator.reference_space
         ))
 
@@ -193,10 +193,11 @@ class ElectricMotorEnvironment(gym.Env):
         self._call_callbacks('on_reset_begin')
         self._done = False
         state = self._physical_system.reset()
-        reference, next_ref = self.reference_generator.reset(state)
-        self._reward_function.reset(state, reference)
+        self.reference_generator.reset(state)
+        reference = self.reference_generator.get_reference_observation(state)
+        self._reward_function.reset()
         self._call_callbacks('on_reset_end', state, reference)
-        return state, next_ref
+        return state, reference
 
     def render(self, mode='human'):
         """Update the visualization of the motor."""

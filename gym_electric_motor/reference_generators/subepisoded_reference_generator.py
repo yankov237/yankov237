@@ -44,8 +44,9 @@ class SubepisodedReferenceGenerator(ReferenceGenerator, RandomComponent):
         rs = self._referenced_states
         ps = physical_system
         if self._limit_margin is None:
-            upper_margin = (ps.nominal_state[rs] / ps.limits[rs])[0] * ps.state_space.high[rs]
-            lower_margin = (ps.nominal_state[rs] / ps.limits[rs])[0] * ps.state_space.low[rs]
+            upper_margin = ((ps.nominal_state[rs]) / (ps.limits[rs])) 
+            upper_margin *= (ps.state_observation_space.high[rs])
+            lower_margin = (ps.nominal_state[rs] / ps.limits[rs]) * ps.state_observation_space.low[rs]
             self._limit_margin = lower_margin[0], upper_margin[0]
         elif type(self._limit_margin) in [float, int]:
             upper_margin = self._limit_margin * ps.state_space.high[rs]

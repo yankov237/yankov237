@@ -26,6 +26,14 @@ class ContFourQuadrantConverter(ContDynamicallyAveragedConverter):
     """
 
     action_space = gym.spaces.Box(-1, 1, shape=(1,), dtype=np.float64)
+    
+    @property
+    def output_shape(self):
+        return (1,)
+
+    @property
+    def supply_shape(self):
+        return (1,)
 
     def __init__(self, **kwargs):
         # Docstring in base class

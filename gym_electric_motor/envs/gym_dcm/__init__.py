@@ -1,10 +1,10 @@
-from .permex_dc_motor_env import ContSpeedControlDcPermanentlyExcitedMotorEnv
-from .permex_dc_motor_env import FiniteSpeedControlDcPermanentlyExcitedMotorEnv
-from .permex_dc_motor_env import ContTorqueControlDcPermanentlyExcitedMotorEnv
-from .permex_dc_motor_env import FiniteTorqueControlDcPermanentlyExcitedMotorEnv
+#from .permex_dc_motor_env import ContSpeedControlDcPermanentlyExcitedMotorEnv
+#from .permex_dc_motor_env import FiniteSpeedControlDcPermanentlyExcitedMotorEnv
+#from .permex_dc_motor_env import ContTorqueControlDcPermanentlyExcitedMotorEnv
+#from .permex_dc_motor_env import FiniteTorqueControlDcPermanentlyExcitedMotorEnv
 from .permex_dc_motor_env import ContCurrentControlDcPermanentlyExcitedMotorEnv
-from .permex_dc_motor_env import FiniteCurrentControlDcPermanentlyExcitedMotorEnv
-
+#from .permex_dc_motor_env import FiniteCurrentControlDcPermanentlyExcitedMotorEnv
+"""
 from .extex_dc_motor_env import ContSpeedControlDcExternallyExcitedMotorEnv
 from .extex_dc_motor_env import FiniteSpeedControlDcExternallyExcitedMotorEnv
 from .extex_dc_motor_env import ContTorqueControlDcExternallyExcitedMotorEnv
@@ -25,3 +25,4 @@ from .shunt_dc_motor_env import ContTorqueControlDcShuntMotorEnv
 from .shunt_dc_motor_env import FiniteTorqueControlDcShuntMotorEnv
 from .shunt_dc_motor_env import ContCurrentControlDcShuntMotorEnv
 from .shunt_dc_motor_env import FiniteCurrentControlDcShuntMotorEnv
+"""

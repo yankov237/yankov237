@@ -85,7 +85,7 @@ class ContCurrentControlDcPermanentlyExcitedMotorEnv(ElectricMotorEnvironment):
     """
     def __init__(
         self, supply=None, converter=None, motor=None, load=None, ode_solver=None,
-        reward_function=None, reference_generator=None, visualization=None, state_filter=None, callbacks=(),
+        reward_function=None, reference_generator=None, visualization=None, callbacks=(),
         constraints=('i',), calc_jacobian=True, tau=1e-4, state_action_processors=()
     ):
         """
@@ -106,7 +106,6 @@ class ContCurrentControlDcPermanentlyExcitedMotorEnv(ElectricMotorEnvironment):
             calc_jacobian(bool): Flag, if the jacobian of the environment shall be taken into account during the
                 simulation. This may lead to speed improvements. Default: True
             tau(float): Duration of one control step in seconds. Default: 1e-4.
-            state_filter(list(str)): List of states that shall be returned to the agent. Default: None (no filter)
             callbacks(list(Callback)): Callbacks for user interaction. Default: ()
             state_action_processors(list(StateActionProcessor)): List of state action processors to modify the
             actions to and states from the physical system before they are used in the environment. Default: ()
@@ -127,8 +126,8 @@ class ContCurrentControlDcPermanentlyExcitedMotorEnv(ElectricMotorEnvironment):
         physical_system = SCMLSystem(
             supply=initialize(ps.VoltageSupply, supply, ps.IdealVoltageSupply, dict(u_nominal=60.0)),
             converter=initialize(ps.PowerElectronicConverter, converter, ps.ContFourQuadrantConverter, dict()),
-            motor=initialize(ps.ElectricMotor, motor, ps.DcPermanentlyExcitedMotor, dict()),
-            load=initialize(ps.MechanicalLoad, load, ps.ConstantSpeedLoad, dict(omega_fixed=100.0)),
+            motor=initialize(ps.ElectricMotor, motor, ps.PermanentlyExcitedDcMotor, dict()),
+            load=initialize(ps.MechanicalLoad, load, ps.ConstantSpeedLoad, dict(omega=100.0)),
             ode_solver=initialize(ps.OdeSolver, ode_solver, ps.ScipyOdeSolver, dict()),
             calc_jacobian=calc_jacobian,
             tau=tau
@@ -145,6 +144,6 @@ class ContCurrentControlDcPermanentlyExcitedMotorEnv(ElectricMotorEnvironment):
             visualization, MotorDashboard, dict(state_plots=('i',), action_plots='all'))
         super().__init__(
             physical_system=physical_system, reference_generator=reference_generator, reward_function=reward_function,
-            constraints=constraints, visualization=visualization, state_filter=state_filter, callbacks=callbacks,
+            constraints=constraints, visualizations=(visualization,), callbacks=callbacks,
             state_action_processors=state_action_processors
         )

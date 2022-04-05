@@ -46,6 +46,10 @@ class PhysicalSystem:
         raise NotImplementedError
 
     @property
+    def state_tex_names(self):
+      raise NotImplementedError
+
+    @property
     def action_space(self) -> gym.spaces.Space:
         """gym.Space: An OpenAI Gym Space that describes the possible actions on the system."""
         raise NotImplementedError
@@ -64,6 +68,14 @@ class PhysicalSystem:
     def nominal_state(self) -> np.ndarray:
         """ndarray(float): An array containing the nominal values for each state variable."""
         return NotImplementedError
+    
+    @property
+    def state_units(self):
+        raise NotImplementedError
+    
+    @property
+    def state_tex_units(self):
+        raise NotImplementedError
 
     def __init__(self):      
         self._k = 0

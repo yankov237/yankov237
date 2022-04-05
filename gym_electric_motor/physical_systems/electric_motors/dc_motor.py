@@ -71,12 +71,13 @@ class DcMotor(ElectricMotor):
     def observation_space(self):
         return gym.spaces.Box(-1, 1, shape=(4,))
 
-    def __init__(self, motor_parameter=None, nominal_values=None, limit_values=None, motor_initializer=None):
+    def __init__(self, motor_parameter=None, nominal_values=None, limit_values=None):
         # Docstring of superclass
-        super().__init__(motor_parameter, nominal_values, limit_values, motor_initializer)
+        super().__init__(motor_parameter, nominal_values, limit_values)
         #: Matrix that contains the constant parameters of the systems equation for faster computation
         self._model_constants = None
         self._model_variables = None
+        self._u_in = None
         self._update_model()
 
     def _update_model(self):
@@ -126,3 +127,6 @@ class DcMotor(ElectricMotor):
             np.array([mp['l_e_prime'] * motor_state[self.I_E_IDX],
                       mp['l_e_prime'] * motor_state[self.I_A_IDX]])
         )
+
+    def set_u_in(self, u_in):
+        self._u_in = u_in

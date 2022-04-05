@@ -161,9 +161,9 @@ def concatenate_boxes(*boxes):
     low = []
     high = [] 
     for box in boxes:
-        low.append(box.low)
-        high.append(box.high)
-    return gym.spaces.Box(low, high)    
+        low += list(box.low)
+        high += list(box.high)
+    return gym.spaces.Box(np.array(low), np.array(high))    
 
 #: Short notation for the gym.make call to avoid the necessary import of gym when making environments.
 make = gym.make

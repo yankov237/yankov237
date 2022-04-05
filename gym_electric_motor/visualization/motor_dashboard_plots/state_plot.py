@@ -77,10 +77,10 @@ class StatePlot(TimePlot):
         ps = env.physical_system
         rg = env.reference_generator
         # Save the index of the state.
-        self._state_idx = ps.state_positions[self._state]
+        self._state_idx = ps.state_names.index(self._state)
         # The maximal values of the state.
         self._limits = ps.limits[self._state_idx]
-        self._state_space = ps.state_space.low[self._state_idx], ps.state_space.high[self._state_idx]
+        self._state_space = ps.state_observation_space.low[self._state_idx], ps.state_observation_space.high[self._state_idx]
         # Bool: if the state is referenced.
         self._referenced = rg.referenced_states[self._state_idx]
         # Bool: if the data is already normalized to an interval of [-1, 1]
