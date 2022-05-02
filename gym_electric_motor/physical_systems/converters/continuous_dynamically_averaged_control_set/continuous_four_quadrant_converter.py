@@ -46,9 +46,9 @@ class ContFourQuadrantConverter(ContDynamicallyAveragedConverter):
         self._subconverters[1].reset()
         super().reset()
 
-    def convert(self, i_out, t):
+    def convert(self, t, i_out, u_sup):
         # Docstring in base class
-        return [self._subconverters[0].convert(i_out, t)[0] - self._subconverters[1].convert(i_out, t)[0]]
+        return [self._subconverters[0].convert(t, i_out, u_sup)[0] - self._subconverters[1].convert(t, i_out, u_sup)[0]]
 
     def set_action(self, action, t):
         # Docstring in base class

@@ -33,7 +33,20 @@ class ContTwoQuadrantConverter(ContDynamicallyAveragedConverter):
     def i_sup(self, i_out):
         # Docstring in base class
         interlocking_current = 1 if i_out[0] < 0 else 0
-        return (
-            self._current_action[0]
-            + self._interlocking_time / self._tau * (interlocking_current - self._current_action[0])
-        ) * i_out[0]
+        return self._current_action[0] * i_out[0]
+
+    def convert(self, t, i_out, u_sup):
+        """The conversion function that converts the previously set action to an input voltage for the motor.
+
+        This function has to be called at least at every previously defined switching time, because the input voltage
+        for the motor might change at these times.
+
+        Args:
+            t(float): Current time of the system.
+            i_out(np.ndarray[float]): All currents that flow out of the converter into the motor.
+            u_in(np.ndarray[float]): All supply voltages.
+
+        Returns:
+             np.ndarray(float): All input voltages to the motor.
+        """
+        return self._current_action * u_sup

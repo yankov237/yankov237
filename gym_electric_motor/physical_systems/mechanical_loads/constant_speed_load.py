@@ -54,7 +54,6 @@ class ConstantSpeedLoad(MechanicalLoad):
     def speed_shape(self):
         return self._shape
         
-    @property
     def get_omega(self, load_state):
         """
         Returns:

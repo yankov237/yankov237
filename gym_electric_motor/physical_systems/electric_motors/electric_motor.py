@@ -39,6 +39,10 @@ class ElectricMotor(SCMLComponent, RandomComponent):
         raise NotImplementedError
 
     @property
+    def ode_size(self):
+        return 0
+
+    @property
     def limits(self):
         return self._limits
 
@@ -74,7 +78,6 @@ class ElectricMotor(SCMLComponent, RandomComponent):
 
         self._limits = np.array([_limits[obs] for obs in self.observation_names])
         self._nominal_state = np.array([_nominals[obs] for obs in self.observation_names])
-
 
     def electrical_ode(self, motor_state, omega):
         """Calculation of the derivatives of each motor state variable for the given inputs / The motors ODE-System.
