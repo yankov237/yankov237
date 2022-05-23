@@ -1,6 +1,6 @@
 from gym_electric_motor.core import ElectricMotorEnvironment, ReferenceGenerator, RewardFunction, \
     ElectricMotorVisualization
-from gym_electric_motor.physical_systems import SCMLSystem
+from gym_electric_motor.physical_systems.scml_system import SCMLSystem
 from gym_electric_motor.visualization import MotorDashboard
 from gym_electric_motor.reference_generators.wiener_process_reference_generator import WienerProcessReferenceGenerator
 from gym_electric_motor import physical_systems as ps
@@ -86,7 +86,7 @@ class ContCurrentControlDcPermanentlyExcitedMotorEnv(ElectricMotorEnvironment):
     def __init__(
         self, supply=None, converter=None, motor=None, load=None, ode_solver=None,
         reward_function=None, reference_generator=None, visualization=None, callbacks=(),
-        constraints=('i',), calc_jacobian=True, tau=1e-4, state_action_processors=()
+        constraints=('i',), calc_jacobian=True, tau=1e-4, physical_system_wrappers=()
     ):
         """
         Args:
@@ -107,7 +107,7 @@ class ContCurrentControlDcPermanentlyExcitedMotorEnv(ElectricMotorEnvironment):
                 simulation. This may lead to speed improvements. Default: True
             tau(float): Duration of one control step in seconds. Default: 1e-4.
             callbacks(list(Callback)): Callbacks for user interaction. Default: ()
-            state_action_processors(list(StateActionProcessor)): List of state action processors to modify the
+            physical_system_wrappers(list(PhysicalSystemWrapper)): List of Physical System Wrappers to modify the
             actions to and states from the physical system before they are used in the environment. Default: ()
 
         Note on the env-arg type:
@@ -145,5 +145,5 @@ class ContCurrentControlDcPermanentlyExcitedMotorEnv(ElectricMotorEnvironment):
         super().__init__(
             physical_system=physical_system, reference_generator=reference_generator, reward_function=reward_function,
             constraints=constraints, visualizations=(visualization,), callbacks=callbacks,
-            state_action_processors=state_action_processors
+            physical_system_wrappers=physical_system_wrappers
         )

@@ -16,8 +16,10 @@ import gym_electric_motor.reference_generators
 import gym_electric_motor.reward_functions
 import gym_electric_motor.visualization
 import gym_electric_motor.physical_systems
-#import gym_electric_motor.envs
-import gym_electric_motor.state_action_processors
+
+import gym_electric_motor.envs
+import gym_electric_motor.physical_system_wrappers
+
 
 from gym.envs.registration import register
 import gym
